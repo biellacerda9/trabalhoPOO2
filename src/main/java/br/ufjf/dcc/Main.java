@@ -94,6 +94,56 @@ public class Main {
         }
     }
 
+    public static void exibeMenuDoInvestidor() {
+        Scanner scanner = new Scanner(System.in);
+        println("Esse é o menu do investidor!");
+
+        while(true){
+            println("1. Editar informações");
+            println("2. Excluir investidor");
+            println("3. Exibir ativos");
+            println("4. Exibir total gasto");
+            println("5. Exibir total atual");
+            println("6. Exibir porcentagem de produtos RF e RV");
+            println("7. Exibir porcentagem de produtos NAC e INT");
+            println("8. Salvar relatório");
+            println("9. Adicionar movimentação (compra)");
+            println("10. Adicionar movimentação (venda)");
+            println("11. Adicionar lote de movimentações");
+            println("12. Voltar");
+            print("Escolha uma opção: ");
+            String escolha = scanner.nextLine();
+
+            if (escolha.equals("1")) {
+                println("Entrou no 1.");
+            } else if (escolha.equals("2")) {
+                println("Entrou no 2.");
+            } else if (escolha.equals("3")) {
+                println("Entrou no 3.");
+            } else if (escolha.equals("4")) {
+                println("Entrou no 4.");
+            } else if (escolha.equals("5")) {
+                println("Entrou no 5.");
+            } else if (escolha.equals("6")) {
+                println("Entrou no 6.");
+            } else if (escolha.equals("7")) {
+                println("Entrou no 7.");
+            } else if (escolha.equals("8")) {
+                println("Entrou no 8.");
+            } else if (escolha.equals("9")) {
+                println("Entrou no 9.");
+            } else if (escolha.equals("10")) {
+                println("Entrou no 10.");
+            } else if (escolha.equals("11")) {
+                println("Entrou no 11.");
+            } else if (escolha.equals("12")) {
+                break;
+            } else {
+                println("Opção inválida. Tente novamente.");
+            }
+        }
+    }
+
     public static void println(String msg) {
         System.out.println(msg);
     }
