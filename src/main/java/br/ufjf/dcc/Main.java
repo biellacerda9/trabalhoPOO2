@@ -19,10 +19,42 @@ public class Main {
             String escolha = scanner.nextLine();
 
             if (escolha.equals("1")) {
+                exibeMenuAtivos();
+            } else if (escolha.equals("2")) {
+                println("Entrou no 2.");
+            } else if (escolha.equals("3")) {
+                break;
+            } else {
+                println("Opção inválida. Tente novamente.");
+            }
+        }
+    }
+
+    public static void exibeMenuAtivos() {
+        Scanner scanner = new Scanner(System.in);
+        println("Esse é o menu de ativos!");
+
+        while(true){
+            println("1. Cadastrar ativo");
+            println("2. Cadastrar ativo em lote");
+            println("3. Editar ativo");
+            println("4. Excluir ativo");
+            println("5. Exibir relatório de ativos");
+            println("6. Voltar");
+            print("Escolha uma opção: ");
+            String escolha = scanner.nextLine();
+
+            if (escolha.equals("1")) {
                 println("Entrou no 1.");
             } else if (escolha.equals("2")) {
                 println("Entrou no 2.");
             } else if (escolha.equals("3")) {
+                println("Entrou no 3.");
+            } else if (escolha.equals("4")) {
+                println("Entrou no 4.");
+            } else if (escolha.equals("5")) {
+                println("Entrou no 5.");
+            } else if (escolha.equals("6")) {
                 break;
             } else {
                 println("Opção inválida. Tente novamente.");
