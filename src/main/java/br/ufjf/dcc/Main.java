@@ -1,17 +1,40 @@
 package br.ufjf.dcc;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import java.util.Scanner;
+
 public class Main {
     static void main() {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        IO.println(String.format("Hello and welcome!"));
+        exibirMenuPrincipal();
+    }
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            IO.println("i = " + i);
+    public static void exibirMenuPrincipal() {
+        Scanner scanner = new Scanner(System.in);
+        println("Esse é o menu principal!");
+
+        while(true){
+            println("1. Menu de Ativos");
+            println("2. Menu de Investidor");
+            println("3. Encerrar");
+            print("Escolha uma opção: ");
+            String escolha = scanner.nextLine();
+
+            if (escolha.equals("1")) {
+                println("Entrou no 1.");
+            } else if (escolha.equals("2")) {
+                println("Entrou no 2.");
+            } else if (escolha.equals("3")) {
+                break;
+            } else {
+                println("Opção inválida. Tente novamente.");
+            }
         }
+    }
+
+    public static void println(String msg) {
+        System.out.println(msg);
+    }
+
+    public static void print(String msg) {
+        System.out.print(msg);
     }
 }
