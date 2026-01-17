@@ -1,4 +1,4 @@
-package br.ufjf.dcc;
+package br.ufjf.dcc.main;
 
 import java.io.IOException;
 import java.nio.file.Files;

@@ -1,4 +1,4 @@
-package br.ufjf.dcc;
+package br.ufjf.dcc.model;
 
 public class Acao extends Ativo {
     public Acao(String nome, String ticker, double precoAtual, boolean qualificado) {

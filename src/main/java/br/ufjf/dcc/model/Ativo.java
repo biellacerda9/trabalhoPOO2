@@ -1,4 +1,4 @@
-package br.ufjf.dcc;
+package br.ufjf.dcc.model;
 
 public abstract class Ativo {
     private String nome;

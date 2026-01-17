@@ -1,4 +1,4 @@
-package br.ufjf.dcc;
+package br.ufjf.dcc.model;
 
 public class Tesouro extends Ativo{
     private String tipoRendimento;

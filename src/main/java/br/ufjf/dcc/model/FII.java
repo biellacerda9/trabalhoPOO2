@@ -1,4 +1,4 @@
-package br.ufjf.dcc;
+package br.ufjf.dcc.model;
 
 public class FII extends Ativo{
     private String segmento;

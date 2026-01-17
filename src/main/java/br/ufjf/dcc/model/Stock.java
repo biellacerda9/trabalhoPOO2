@@ -1,10 +1,10 @@
-package br.ufjf.dcc;
+package br.ufjf.dcc.model;
 
-public class Stocks extends Ativo{
+public class Stock extends Ativo{
     private String bolsaNegociacao;
     private String setorEmpresa;
     private double fatorConversaoDolar;
-    public Stocks(String nome, String ticker, double precoAtual, boolean qualificado, String bolsaNegociacao, String setorEmpresa) {
+    public Stock(String nome, String ticker, double precoAtual, boolean qualificado, String bolsaNegociacao, String setorEmpresa) {
         super(nome, ticker, precoAtual, qualificado);
         this.bolsaNegociacao = bolsaNegociacao;
         this.setorEmpresa = setorEmpresa;

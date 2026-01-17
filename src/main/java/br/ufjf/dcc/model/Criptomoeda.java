@@ -1,11 +1,11 @@
-package br.ufjf.dcc;
+package br.ufjf.dcc.model;
 
-public class Criptomoedas extends Ativo{
+public class Criptomoeda extends Ativo{
     private String algoritmoConsenso;
     double qtdMaxCirculacao;
     double fatorConversaoDolar;
 
-    public Criptomoedas(String nome, String ticker, double precoAtual, boolean qualificado, String algoritmoConsenso, double qtdMaxCirculacao) {
+    public Criptomoeda(String nome, String ticker, double precoAtual, boolean qualificado, String algoritmoConsenso, double qtdMaxCirculacao) {
         super(nome, ticker, precoAtual, qualificado);
         this.algoritmoConsenso = algoritmoConsenso;
         this.qtdMaxCirculacao = qtdMaxCirculacao;
