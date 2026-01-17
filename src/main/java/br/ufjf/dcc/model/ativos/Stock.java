@@ -1,14 +1,14 @@
-package br.ufjf.dcc.model;
+package br.ufjf.dcc.model.ativos;
 
-public class Stock extends Ativo{
+public class Stock extends Ativo implements AtivoInternacional {
     private String bolsaNegociacao;
     private String setorEmpresa;
-    private double fatorConversaoDolar;
-    public Stock(String nome, String ticker, double precoAtual, boolean qualificado, String bolsaNegociacao, String setorEmpresa) {
+    private double fatorConversao;
+    public Stock(String nome, String ticker, double precoAtual, boolean qualificado, String bolsaNegociacao, String setorEmpresa, double fatorConversao) {
         super(nome, ticker, precoAtual, qualificado);
         this.bolsaNegociacao = bolsaNegociacao;
         this.setorEmpresa = setorEmpresa;
-        this.fatorConversaoDolar = 5.39;
+        this.fatorConversao = fatorConversao;
     }
 
     public String getBolsaNegociacao() {
@@ -31,6 +31,20 @@ public class Stock extends Ativo{
     }
 
     public double converterMoedaParaReal () {
-        return this.getPrecoAtual() * this.fatorConversaoDolar;
+        return this.getPrecoAtual() * this.fatorConversao;
+    }
+
+    @Override
+    public boolean ehNacional() {
+        return false;
+    }
+
+    @Override
+    public double getFatorConversao() {
+        return this.fatorConversao;
+    }
+
+    public void setFatorConversao(double fatorConversao) {
+        this.fatorConversao = fatorConversao;
     }
 }

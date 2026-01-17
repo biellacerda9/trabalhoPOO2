@@ -1,5 +1,8 @@
 package br.ufjf.dcc.model;
 
+import br.ufjf.dcc.model.ativos.Ativo;
+import br.ufjf.dcc.model.ativos.AtivoInternacional;
+
 public class PosicaoAtivo {
     private Ativo ativo;
     private double quantidade;
@@ -31,15 +34,15 @@ public class PosicaoAtivo {
         this.precoMedioCompra = precoMedio;
     }
 
-    //Metodo para calcular quanto essa posição vale HOJE
-    public double getValorAtual() {
-        return this.quantidade * this.ativo.getPrecoAtual();
-    }
+//    //Metodo para calcular quanto essa posição vale HOJE
+//    public double getValorAtual() {
+//        return this.quantidade * this.ativo.getPrecoAtual();
+//    }
 
     //Metodo para calcular quanto foi gasto no total
-    public double getValorGasto() {
-        return this.quantidade * this.precoMedioCompra;
-    }
+//    public double getValorGasto() {
+//        return this.quantidade * this.precoMedioCompra;
+//    }
 
     //Atualiza o precoMedio
     public void atualizar(double novaQuantidade, double novoPrecoCompra) {
@@ -52,4 +55,28 @@ public class PosicaoAtivo {
         this.quantidade = novaQuantidadeTotal;
     }
 
+    //calcula o valor gasto total, ja convertendo caso for internacional
+    public double getValorGastoEmReal() {
+        double valorBase = this.quantidade * this.precoMedioCompra;
+        if (this.ativo instanceof AtivoInternacional) {
+            AtivoInternacional a = (AtivoInternacional) this.ativo;
+            return valorBase * a.getFatorConversao();
+        }
+        return valorBase;
+    }
+
+
+    //calcula o valor de mercado ATUAL em real
+    public double getValorAtualEmReal() {
+        if  (this.ativo instanceof AtivoInternacional) {
+            AtivoInternacional a = (AtivoInternacional) this.ativo;
+            return this.quantidade * a.converterMoedaParaReal();
+        }
+        return this.quantidade * this.ativo.getPrecoAtual();
+    }
+
+    //caso de vendas
+    public void subtrairQuantidade (double qtd) {
+        this.quantidade -= qtd;
+    }
 }

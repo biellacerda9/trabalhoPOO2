@@ -1,4 +1,4 @@
-package br.ufjf.dcc.model;
+package br.ufjf.dcc.model.ativos;
 
 public abstract class Ativo {
     private String nome;
@@ -46,4 +46,5 @@ public abstract class Ativo {
     }
 
     public abstract String getTipoRenda();
+    public abstract boolean ehNacional();
 }

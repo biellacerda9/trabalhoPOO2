@@ -1,6 +1,6 @@
-package br.ufjf.dcc.model;
+package br.ufjf.dcc.model.ativos;
 
-public class Tesouro extends Ativo{
+public class Tesouro extends Ativo {
     private String tipoRendimento;
     private String dataVencimento; //no futuro podemos trocar para Date ou LocalDate
     public Tesouro(String nome, String ticker, double precoAtual, boolean qualificado, String tipoRendimento, String dataVencimento) {
@@ -27,5 +27,9 @@ public class Tesouro extends Ativo{
 
     public void setDataVencimento(String dataVencimento) {
         this.dataVencimento = dataVencimento;
+    }
+
+    public boolean ehNacional() {
+        return true;
     }
 }

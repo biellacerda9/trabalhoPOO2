@@ -1,7 +1,8 @@
 package br.ufjf.dcc.model;
 
 
-import java.util.ArrayList;
+import br.ufjf.dcc.model.ativos.Ativo;
+
 import java.util.HashMap;
 import java.util.Map;
 

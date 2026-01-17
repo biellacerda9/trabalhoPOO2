@@ -1,6 +1,6 @@
-package br.ufjf.dcc.model;
+package br.ufjf.dcc.model.ativos;
 
-public class FII extends Ativo{
+public class FII extends Ativo {
     private String segmento;
     private double valorDividendo;
     private double taxaAdm;
@@ -24,8 +24,8 @@ public class FII extends Ativo{
         this.segmento = segmento;
     }
 
-    public double getTaxaAdm() {
-        return taxaAdm;
+    public String getTaxaAdm() {
+        return String.format("%.2f%%", this.taxaAdm);
     }
 
     public void setTaxaAdm(double taxaAdm) {
@@ -40,7 +40,8 @@ public class FII extends Ativo{
         this.valorDividendo = valorDividendo;
     }
 
-    public String exibirTaxaAdm () {
-        return ""; //ver esse trem de %
+    public boolean  ehNacional() {
+        return true;
     }
+
 }

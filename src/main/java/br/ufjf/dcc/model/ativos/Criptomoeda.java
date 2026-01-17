@@ -1,15 +1,15 @@
-package br.ufjf.dcc.model;
+package br.ufjf.dcc.model.ativos;
 
-public class Criptomoeda extends Ativo{
+public class Criptomoeda extends Ativo implements AtivoInternacional {
     private String algoritmoConsenso;
-    double qtdMaxCirculacao;
-    double fatorConversaoDolar;
+    private double qtdMaxCirculacao;
+    private double fatorConversao;
 
-    public Criptomoeda(String nome, String ticker, double precoAtual, boolean qualificado, String algoritmoConsenso, double qtdMaxCirculacao) {
+    public Criptomoeda(String nome, String ticker, double precoAtual, boolean qualificado, String algoritmoConsenso, double qtdMaxCirculacao, double  fatorConversao) {
         super(nome, ticker, precoAtual, qualificado);
         this.algoritmoConsenso = algoritmoConsenso;
         this.qtdMaxCirculacao = qtdMaxCirculacao;
-        this.fatorConversaoDolar = 5.39;
+        this.fatorConversao = fatorConversao;
     }
 
     public String getAlgoritmoConsenso() {
@@ -33,6 +33,19 @@ public class Criptomoeda extends Ativo{
     }
 
     public double converterMoedaParaReal() {
-        return this.getPrecoAtual() * this.fatorConversaoDolar;
+        return this.getPrecoAtual() * this.fatorConversao;
+    }
+
+    @Override
+    public boolean ehNacional() {
+        return false;
+    }
+
+    public double getFatorConversao() {
+        return this.fatorConversao;
+    }
+
+    public void setFatorConversao(double fatorConversao) {
+        this.fatorConversao = fatorConversao;
     }
 }
