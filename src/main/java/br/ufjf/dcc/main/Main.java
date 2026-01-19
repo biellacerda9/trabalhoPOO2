@@ -6,16 +6,73 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main {
+    //"banco de dados"
+    private static Map<String, Ativo> bancoAtivos = new HashMap<>();
+
     static void main() {
         exibirMenuPrincipal();
     }
+
+
+    //funcao pra colocar os arquivos iniciais tambem no "banco"
+    public static void carregarArquivosIniciais () {
+        List<String[]> acao = lerCSV("acao.csv");
+        for (String[] col : acao) {
+            try {
+                Acao a = new Acao(col[0], col[1], Double.parseDouble(col[2]), Boolean.parseBoolean(col[3]));
+                bancoAtivos.put(a.getTicker().toUpperCase(), a);
+            } catch (Exception e) {
+                println("Erro ao carregar arquivo iniciais: " + e.getMessage());
+            }
+        }
+
+        List<String[]> fii = lerCSV("fii.csv");
+        for (String[] col : fii) {
+            try {
+                FII a = new FII(col[0], col [1], Double.parseDouble(col[2]), Boolean.parseBoolean(col[3]), col[4], Double.parseDouble(col[5]), Double.parseDouble(col[6]));
+                bancoAtivos.put(a.getTicker().toUpperCase(), a);
+            } catch (Exception e) {
+                println("Erro ao carregar arquivo iniciais: " + e.getMessage());
+            }
+        }
+
+        List<String[]> tesouro = lerCSV("tesouro.csv");
+        for (String[] col : tesouro) {
+            try {
+                Tesouro a = new Tesouro(col[0], col [1], Double.parseDouble(col[2]), Boolean.parseBoolean(col[3]), col[4], col[5]);
+                bancoAtivos.put(a.getTicker().toUpperCase(), a);
+            } catch (Exception e) {
+                println("Erro ao carregar arquivo iniciais: " + e.getMessage());
+            }
+        }
+
+        List<String[]> stock = lerCSV("stock.csv");
+        for (String[] col : stock) {
+            try {
+                Stock a = new Stock(col[0], col [1], Double.parseDouble(col[2]), Boolean.parseBoolean(col[3]),  col[4], col[5], Double.parseDouble(col[6]));
+                bancoAtivos.put(a.getTicker().toUpperCase(), a);
+            } catch (Exception e) {
+                println("Erro ao carregar arquivo iniciais: " + e.getMessage());
+            }
+        }
+
+        List<String[]> cripto = lerCSV("criptoativo.csv");
+        for (String[] col : cripto) {
+            try {
+                Criptomoeda a = new Criptomoeda(col[0], col [1], Double.parseDouble(col[2]), Boolean.parseBoolean(col[3]), col[4], Double.parseDouble(col[5]), Double.parseDouble(col[6]));
+                bancoAtivos.put(a.getTicker().toUpperCase(), a);
+            } catch (Exception e) {
+                println("Erro ao carregar arquivo iniciais: " + e.getMessage());
+            }
+        }
+
+    }
+
 
     public static void exibirMenuPrincipal() {
         Scanner scanner = new Scanner(System.in);
@@ -133,6 +190,94 @@ public class Main {
             println("Tipo de ativo inválido.");
             return;
         }
+    }
+
+    public static void cadastrarAtivoEmLote () {
+        Scanner scanner = new Scanner(System.in);
+
+        println("Digite o caminho do arquivo (ex: acoes.csv): ");
+        String caminho = scanner.nextLine();
+
+        println("Digite o tipo de ativos presente neste arquivo: ");
+        println("1-Ação, 2-FII, 3-Stock, 4-Cripto, 5-Tesouro)");
+        String tipoDoArquivo = scanner.nextLine();
+
+        List<String[]> linhas = lerCSV(caminho);
+
+        for  (String[] col : linhas) {
+            Ativo novoAtivo = null;
+            if (tipoDoArquivo.equals("1")){
+                novoAtivo = new Acao(col[0], col [1], Double.parseDouble(col[2]), Boolean.parseBoolean(col[3]));
+            } else if (tipoDoArquivo.equals("2")) {
+                novoAtivo = new FII(col[0], col [1], Double.parseDouble(col[2]), Boolean.parseBoolean(col[3]), col[4], Double.parseDouble(col[5]), Double.parseDouble(col[6]));
+            } else if (tipoDoArquivo.equals("3")) {
+                novoAtivo = new Stock(col[0], col [1], Double.parseDouble(col[2]), Boolean.parseBoolean(col[3]),  col[4], col[5], Double.parseDouble(col[6]));
+            } else if (tipoDoArquivo.equals("4")) {
+                novoAtivo = new Criptomoeda(col[0], col [1], Double.parseDouble(col[2]), Boolean.parseBoolean(col[3]), col[4], Double.parseDouble(col[5]), Double.parseDouble(col[6]));
+            } else if (tipoDoArquivo.equals("5")) {
+                novoAtivo = new Tesouro(col[0], col [1], Double.parseDouble(col[2]), Boolean.parseBoolean(col[3]), col[4], col[5]);
+            }
+
+            if (novoAtivo != null) {
+                bancoAtivos.put(novoAtivo.getTicker().toUpperCase() , novoAtivo);
+            }
+        }
+    }
+
+    public static void exibirAtivosDoBanco () {
+        println("LISTA DE ATIVOS NO SISTEMA:");
+        for (Ativo a :  bancoAtivos.values()) {
+            println(a.getTicker() + " | " + a.getNome() + " | Preço Atual: R$ " + a.getPrecoAtual());
+        }
+    }
+
+    public static void editarAtivo () {
+        Scanner scanner = new Scanner(System.in);
+        println("Qual tipo de ativo deseja editar? ");
+        println("1-Ação, 2-FII, 3-Stock, 4-Cripto, 5-Tesouro");
+        String tipoDoArquivo = scanner.nextLine();
+
+        if (tipoDoArquivo.equals("1")) {
+            println("Digite o ticker (ID) do arquivo que deseja editar: ");
+            String tickerEditar = scanner.nextLine();
+
+            while (true) {
+                for (Ativo a :  bancoAtivos.values()) {
+                    if (a.getTicker().equals(tickerEditar.toUpperCase())) {
+                        println("O que deseja editar?");
+                        println("1- Nome, 2- Ticker, 3- Preço, 4- Qualificação, 5-SAIR");
+                        String escolha = scanner.nextLine();
+
+                        if (escolha.equals("1")) {
+                            println("Digite o novo nome: ");
+                            String novoNome =  scanner.nextLine();
+                            a.setNome(novoNome);
+                        } else if  (escolha.equals("2")) {
+                            println("Digite o novo ticker: ");
+                            String novoTicker = scanner.nextLine();
+                            a.setTicker(novoTicker);
+                        } else if   (escolha.equals("3")) {
+                            println("Digite o novo preço: ");
+                        } else if (escolha.equals("4")) {
+                            println("Digite a nova qualificação (SIM/NÃO)");
+                            String novaQualificacao = scanner.nextLine();
+                            if (novaQualificacao.equalsIgnoreCase("SIM")) {
+                                a.setQualificado(true);
+                            } else if (novaQualificacao.equalsIgnoreCase("NÃO")) {
+                                a.setQualificado(false);
+                            } else {
+                                println("Valor inválido, tente novamente!");
+                                //logica para perguntar de novo a resposta
+                            }
+                        } else if   (escolha.equals("5")) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+
     }
 
     public static void exibeMenuDeInvestidores() {
