@@ -53,6 +53,31 @@ public class Carteira {
         return total;
     }
 
+    public double getValorTotalAtual () {
+        double total = 0;
+
+        for(ItemCarteira item : this.itens.values()){
+            total += getValorTotalAtual();
+        }
+
+        return total;
+    }
+
+    //Pegar o valor total da carteira, somar todos os ativos que tem renda fixa e apos dividir
+    //pela pelo valor total da carteira. Mesmo processo pra renda variavel
+    public double getPercentualRendaFixa() {
+        double totalCarteira = getValorTotalAtual();
+
+        return porcentagem;
+    }
+
+    public double getPercentualRendaVariavel() {
+        double totalCarteira = getValorTotalAtual();
+
+        return porcentagem;
+    }
+
+
     public static void println(String msg) {
         System.out.println(msg);
     }
