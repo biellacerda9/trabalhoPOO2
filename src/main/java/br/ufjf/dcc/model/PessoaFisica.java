@@ -27,8 +27,4 @@ public class PessoaFisica extends Investidor{
         return true;
     }
 
-    @Override
-    public boolean cadastrarInvestimento() {
-
-    }
 }

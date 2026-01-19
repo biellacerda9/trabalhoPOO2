@@ -26,22 +26,23 @@ public class Carteira {
         }
     }
 
-    public void removerAtivo(String ticker, double quantidade){
+    public boolean removerAtivo(String ticker, double quantidade){
 
         if(!this.itens.containsKey(ticker)){
             println("Erro: Você não possui este ativo " + ticker);
-            return;
+            return false;
         }
 
         ItemCarteira item = this.itens.get(ticker);
 
         if(quantidade > item.getQuantidade()){
             println("Erro: Saldo insuficiente. Você tem apenas: " + item.getQuantidade());
-            return;
+            return false;
         } else {
             item.subtrairQuantidade(quantidade);
             println( quantidade + " itens removidos com sucesso!");
         }
+        return true;
     }
 
     public double getValorTotalGasto () {
@@ -57,7 +58,7 @@ public class Carteira {
         double total = 0;
 
         for(ItemCarteira item : this.itens.values()){
-            total += getValorTotalAtual();
+            total += item.getValorAtualEmReal();
         }
 
         return total;
@@ -67,6 +68,7 @@ public class Carteira {
     //pela pelo valor total da carteira. Mesmo processo pra renda variavel
     public double getPercentualRendaFixa() {
         double totalCarteira = getValorTotalAtual();
+        if (totalCarteira == 0) return 0;
 
         return porcentagem;
     }
