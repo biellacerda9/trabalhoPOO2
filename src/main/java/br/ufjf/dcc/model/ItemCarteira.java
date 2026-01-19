@@ -3,12 +3,12 @@ package br.ufjf.dcc.model;
 import br.ufjf.dcc.model.ativos.Ativo;
 import br.ufjf.dcc.model.ativos.AtivoInternacional;
 
-public class PosicaoAtivo {
+public class ItemCarteira {
     private Ativo ativo;
     private double quantidade;
     private double precoMedioCompra;
 
-    public PosicaoAtivo(Ativo ativo, double quantidade, double precoPago) {
+    public ItemCarteira(Ativo ativo, double quantidade, double precoPago) {
         this.ativo = ativo;
         this.quantidade = quantidade;
         this.precoMedioCompra = precoPago;
