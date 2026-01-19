@@ -123,6 +123,7 @@ public class Main {
             novoAtivo = new Criptomoeda(nome, ticker, preco, qualificado, algoritmo, quantidade, fator);
         } else  if (escolha.equals("5")) {
             println("Tipo de rendimento: ");
+
             String tipo = scanner.nextLine();
             println("Data de vencimento");
             String dataVencimento = scanner.nextLine();
