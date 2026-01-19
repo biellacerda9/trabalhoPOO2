@@ -44,6 +44,15 @@ public class Carteira {
         }
     }
 
+    public double getValorTotalGasto () {
+        double total = 0;
+
+        for(ItemCarteira item : this.itens.values()){
+            total += item.getValorGastoEmReal();
+        }
+        return total;
+    }
+
     public static void println(String msg) {
         System.out.println(msg);
     }
