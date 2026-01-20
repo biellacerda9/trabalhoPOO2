@@ -1,5 +1,6 @@
 package br.ufjf.dcc.main;
 
+import br.ufjf.dcc.model.*;
 import br.ufjf.dcc.model.ativos.*;
 
 import java.io.IOException;
@@ -466,6 +467,70 @@ public class Main {
             } else {
                 println("Opção inválida. Tente novamente.");
             }
+        }
+    }
+
+    public static void cadastrarInvestidor() {
+        Scanner scanner = new Scanner(System.in);
+        println("--- CADASTRO DE INVESTIDOR ---");
+        println("Nome: ");
+        String nome = scanner.nextLine();
+        println("Telefone: ");
+        String telefone = scanner.nextLine();
+        println("Data de nascimento: ");
+        String dataNascimento = scanner.nextLine();
+        println("Patrimônio TOTAL (em real): ");
+        double patrimonio = scanner.nextDouble();
+        scanner.nextLine();
+
+        println("--- ENDEREÇO ---");
+
+        println("CEP: ");
+        String cep = scanner.nextLine();
+
+        println("Estado");
+        String estado = scanner.nextLine();
+
+        println("Cidade");
+        String cidade = scanner.nextLine();
+
+        println("Bairro");
+        String bairro = scanner.nextLine();
+
+        println("Rua: ");
+        String rua = scanner.nextLine();
+
+        println("Número: ");
+        int numero = scanner.nextInt();
+        scanner.nextLine();
+
+        Endereco endereco = new Endereco(rua,numero,bairro,cidade,estado,cep);
+
+        println("1- Pessoa Física | 2- Pessoa Institucional:");
+        String escolha = scanner.nextLine();
+        Investidor novoInv = null;
+
+        if (escolha.equals("1")) {
+            println("CPF: ");
+            String cpf = scanner.nextLine();
+            println("Perfil de investimento (Conservador, Moderado ou Arrojado): ");
+            String perfilString =  scanner.nextLine();
+            PerfilInvestimento perfil;
+
+            if (perfilString.equalsIgnoreCase("conservador")) {
+                perfil = PerfilInvestimento.CONSERVADOR;
+            } else if  (perfilString.equalsIgnoreCase("moderado")) {
+                perfil = PerfilInvestimento.MODERADO;
+            } else {
+                perfil = PerfilInvestimento.ARROJADO;
+            }
+            // arrumar aqui depois de arrumar a carteira
+            // novoInv = new PessoaFisica(nome, cpf, telefone, dataNascimento, endereco, patrimonio, carteira, perfil);
+        } else  if (escolha.equals("2")) {
+            println("CNPJ: ");
+            String cnpj = scanner.nextLine();
+            // arrumar aqui depois de arrumar a carteira
+            //novoInv = new PessoaInstitucional();
         }
     }
 
