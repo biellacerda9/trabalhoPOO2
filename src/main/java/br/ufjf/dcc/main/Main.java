@@ -135,9 +135,9 @@ public class Main {
             } else if (escolha.equals("3")) {
                 editarAtivo();
             } else if (escolha.equals("4")) {
-                println("Entrou no 4.");
+                excluirAtivo();
             } else if (escolha.equals("5")) {
-                println("Entrou no 5.");
+                exibirRelatorioAtivos();
             } else if (escolha.equals("6")) {
                 break;
             } else {
@@ -153,7 +153,7 @@ public class Main {
         String escolha = scanner.nextLine();
 
         println("Ticker: ");
-        String ticker = scanner.nextLine();
+        String ticker = scanner.nextLine().toUpperCase();
         println("Nome: ");
         String nome = scanner.nextLine();
 
@@ -280,7 +280,8 @@ public class Main {
         if (ativo != null) {
             String escolha = "";
             while (!escolha.equals("0")) {
-                println("\nEditando: " + ativo.getNome());
+                println("\n--- MODO DE EDIÇÃO ---");
+                println("DADOS: " + ativo.getNome() + " | " + ativo.getPrecoAtual() + " | "  + ativo.getTicker() + " | "  + ativo.isQualificado());
                 println("1. Nome, 2. Ticker, 3. Preço, 4. Qualificação");
 
                 String menuExtra = ativo.getMenuEspecifico();
@@ -302,6 +303,88 @@ public class Main {
         }
     }
 
+
+    public static void excluirAtivo () {
+        Scanner scanner = new Scanner(System.in);
+        exibirAtivosDoBanco();
+        println("Digite o ticker (ID) do ativo que deseja excluir: ");
+        String tickerExcluir =  scanner.nextLine().trim().toUpperCase();
+
+        Ativo ativo = bancoAtivos.get(tickerExcluir);
+
+        if (ativo != null) {
+            print("Tem certeza que deseja excluir " + ativo.getTicker() + " | " + ativo.getNome() + "? "  + "(S/N)");
+            String escolha = scanner.nextLine().trim().toUpperCase();
+            if (escolha.equals("S")) {
+                bancoAtivos.remove(tickerExcluir);
+                println("Excluido com sucesso!");
+                return;
+            } else if (escolha.equals("N")) {
+                println("Exclusão cancelada. \nSaindo da exclusão...");
+                return;
+            }
+        }
+    }
+
+    public static void exibirRelatorioAtivos () {
+        Scanner scanner = new Scanner(System.in);
+        println("--- RELATÓRIO DE ATIVOS ---");
+        while (true) {
+            println("1. Exibir todos os ativos");
+            println("2. Exibir apenas AÇÕES");
+            println("3. Exibir apenas FIIs");
+            println("4. Exibir apenas CRIPTOATIVOS");
+            println("5. Exibir apenas STOCKS");
+            println("6. Exibir apenas TESOURO");
+            println("0. Voltar");
+            println("Escolha uma opção: ");
+            String escolha = scanner.nextLine();
+
+            if (escolha.equals("1")) {
+                println("Exibindo todos os ativos: ");
+                exibirAtivosDoBanco();
+            } else if  (escolha.equals("2")) {
+                println("Exibindo apenas as AÇÕES: ");
+
+                for (Ativo a : bancoAtivos.values()) {
+                    if (a instanceof Acao) {
+                        println(a.getTicker() + " | " + a.getNome() + " | Preço Atual: R$ " + a.getPrecoAtual());
+                    }
+                }
+            } else if (escolha.equals("3")) {
+                println("Exibindo apenas FIIs: ");
+                for (Ativo a : bancoAtivos.values()) {
+                    if (a instanceof FII) {
+                        println(a.getTicker() + " | " + a.getNome() + " | Preço Atual: R$ " + a.getPrecoAtual());
+                    }
+                }
+            } else if  (escolha.equals("4")) {
+                println("Exibindo apenas CRIPTOATIVOS: ");
+                for (Ativo a : bancoAtivos.values()) {
+                    if (a instanceof Criptomoeda) {
+                        println(a.getTicker() + " | " + a.getNome() + " | Preço Atual: R$ " + a.getPrecoAtual());
+                    }
+                }
+            } else if  (escolha.equals("5")) {
+                println("Exibindo apenas STOCKS: ");
+                for (Ativo a : bancoAtivos.values()) {
+                    if (a instanceof Stock) {
+                        println(a.getTicker() + " | " + a.getNome() + " | Preço Atual: R$ " + a.getPrecoAtual());
+                    }
+                }
+            } else if (escolha.equals("6")) {
+                println("Exibindo apenas TESOURO: ");
+                for (Ativo a : bancoAtivos.values()) {
+                    if (a instanceof Tesouro) {
+                        println(a.getTicker() + " | " + a.getNome() + " | Preço Atual: R$ " + a.getPrecoAtual());
+                    }
+                }
+            } else if   (escolha.equals("0")) {
+                println("Voltando...");
+                break;
+            }
+        }
+    }
 
     public static void exibeMenuDeInvestidores() {
         Scanner scanner = new Scanner(System.in);
