@@ -1,5 +1,7 @@
 package br.ufjf.dcc.model.ativos;
 
+import java.util.Scanner;
+
 public class Acao extends Ativo {
     public Acao(String nome, String ticker, double precoAtual, boolean qualificado) {
         super(nome, ticker, precoAtual, qualificado);
@@ -15,4 +17,14 @@ public class Acao extends Ativo {
     }
     public String getTipoRenda() {return "Variável";}
     public boolean ehNacional() {return true;}
+
+    @Override
+    public String getMenuEspecifico() {
+        return "";
+    }
+
+    @Override
+    public void editarCamposEspecificos(String escolha, Scanner scanner) {
+        //
+    }
 }

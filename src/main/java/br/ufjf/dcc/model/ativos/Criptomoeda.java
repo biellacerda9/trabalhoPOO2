@@ -1,5 +1,7 @@
 package br.ufjf.dcc.model.ativos;
 
+import java.util.Scanner;
+
 public class Criptomoeda extends Ativo implements AtivoInternacional {
     private String algoritmoConsenso;
     private double qtdMaxCirculacao;
@@ -47,5 +49,24 @@ public class Criptomoeda extends Ativo implements AtivoInternacional {
 
     public void setFatorConversao(double fatorConversao) {
         this.fatorConversao = fatorConversao;
+    }
+
+    @Override
+    public String getMenuEspecifico() {
+        return "5. Algoritmo Consenso, 6. Qtd Máx Circulação, 7. Fator Conversão";
+    }
+
+    @Override
+    public void editarCamposEspecificos(String escolha, Scanner scanner) {
+        if (escolha.equals("5")) {
+            System.out.print("Novo Algoritmo: ");
+            this.setAlgoritmoConsenso(scanner.nextLine());
+        } else if (escolha.equals("6")) {
+            System.out.print("Nova Qtd Máxima: ");
+            this.setQtdMaxCirculacao(Double.parseDouble(scanner.nextLine().replace(",", ".")));
+        } else if (escolha.equals("7")) {
+            System.out.print("Novo Fator de Conversão (Câmbio): ");
+            this.setFatorConversao(Double.parseDouble(scanner.nextLine().replace(",", ".")));
+        }
     }
 }

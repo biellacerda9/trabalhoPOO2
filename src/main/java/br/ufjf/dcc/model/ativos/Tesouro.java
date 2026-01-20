@@ -1,5 +1,7 @@
 package br.ufjf.dcc.model.ativos;
 
+import java.util.Scanner;
+
 public class Tesouro extends Ativo {
     private String tipoRendimento;
     private String dataVencimento; //no futuro podemos trocar para Date ou LocalDate
@@ -31,5 +33,21 @@ public class Tesouro extends Ativo {
 
     public boolean ehNacional() {
         return true;
+    }
+
+    @Override
+    public String getMenuEspecifico() {
+        return "5. Tipo Rendimento, 6. Data Vencimento";
+    }
+
+    @Override
+    public void editarCamposEspecificos(String escolha, Scanner scanner) {
+        if (escolha.equals("5")) {
+            System.out.print("Novo Tipo de Rendimento: ");
+            this.setTipoRendimento(scanner.nextLine());
+        } else if (escolha.equals("6")) {
+            System.out.print("Nova Data de Vencimento: ");
+            this.setDataVencimento(scanner.nextLine());
+        }
     }
 }

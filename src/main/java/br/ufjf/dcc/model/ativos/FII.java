@@ -1,5 +1,7 @@
 package br.ufjf.dcc.model.ativos;
 
+import java.util.Scanner;
+
 public class FII extends Ativo {
     private String segmento;
     private double valorDividendo;
@@ -40,8 +42,29 @@ public class FII extends Ativo {
         this.valorDividendo = valorDividendo;
     }
 
-    public boolean  ehNacional() {
+    public boolean ehNacional() {
         return true;
+    }
+
+    @Override
+    public String getMenuEspecifico() {
+        return "5. Segmento, 6. Valor Dividendo, 7. Taxa Adm";
+    }
+
+    @Override
+    public void editarCamposEspecificos(String escolha, Scanner scanner) {
+        if (escolha.equals("5")) {
+            System.out.print("Digite o novo segmento: ");
+            this.setSegmento(scanner.nextLine());
+        } else if (escolha.equals("6")) {
+            System.out.print("Digite o novo valor do dividendo: ");
+            String entrada = scanner.nextLine().replace(",", ".");
+            this.setValorDividendo(Double.parseDouble(entrada));
+        } else if (escolha.equals("7")) {
+            System.out.print("Digite a nova taxa administrativa: ");
+            String entrada = scanner.nextLine().replace(",", ".");
+            this.setTaxaAdm(Double.parseDouble(entrada));
+        }
     }
 
 }

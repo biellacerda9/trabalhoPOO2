@@ -1,5 +1,7 @@
 package br.ufjf.dcc.model.ativos;
 
+import java.util.Scanner;
+
 public class Stock extends Ativo implements AtivoInternacional {
     private String bolsaNegociacao;
     private String setorEmpresa;
@@ -46,5 +48,24 @@ public class Stock extends Ativo implements AtivoInternacional {
 
     public void setFatorConversao(double fatorConversao) {
         this.fatorConversao = fatorConversao;
+    }
+
+    @Override
+    public String getMenuEspecifico() {
+        return "5. Bolsa de Negociação, 6. Setor, 7. Fator Conversão";
+    }
+
+    @Override
+    public void editarCamposEspecificos(String escolha, Scanner scanner) {
+        if (escolha.equals("5")) {
+            System.out.print("Nova Bolsa: ");
+            this.setBolsaNegociacao(scanner.nextLine());
+        } else if (escolha.equals("6")) {
+            System.out.print("Novo Setor: ");
+            this.setSetorEmpresa(scanner.nextLine());
+        } else if (escolha.equals("7")) {
+            System.out.print("Novo Fator de Conversão (Câmbio): ");
+            this.setFatorConversao(Double.parseDouble(scanner.nextLine().replace(",", ".")));
+        }
     }
 }

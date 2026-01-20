@@ -15,62 +15,78 @@ public class Main {
     private static Map<String, Ativo> bancoAtivos = new HashMap<>();
 
     static void main() {
+        carregarArquivosIniciais();
         exibirMenuPrincipal();
+    }
+
+    // Função auxiliar para tratar dados vindos dos CSVs
+    private static double parseDoubleGeral(String valor) {
+        if (valor == null || valor.trim().isEmpty() || valor.equals("-")) return 0.0;
+        try {
+            if (valor.contains(",")) {
+                return Double.parseDouble(valor.replace(".", "").replace(",", "."));
+            }
+            return Double.parseDouble(valor);
+        } catch (Exception e) {
+            return 0.0;
+        }
     }
 
 
     //funcao pra colocar os arquivos iniciais tambem no "banco"
-    public static void carregarArquivosIniciais () {
-        List<String[]> acao = lerCSV("acao.csv");
-        for (String[] col : acao) {
+    public static void carregarArquivosIniciais() {
+        println("Carregando arquivos iniciais...");
+
+        List<String[]> acaoLinhas = lerCSV("acao.csv");
+        for (String[] col : acaoLinhas) {
             try {
-                Acao a = new Acao(col[0], col[1], Double.parseDouble(col[2]), Boolean.parseBoolean(col[3]));
+                boolean qualificado = col[3].equals("1");
+                double preco = parseDoubleGeral(col[2]);
+                Acao a = new Acao(col[1], col[0], preco, qualificado);
                 bancoAtivos.put(a.getTicker().toUpperCase(), a);
-            } catch (Exception e) {
-                println("Erro ao carregar arquivo iniciais: " + e.getMessage());
-            }
+            } catch (Exception e) {  }
         }
 
-        List<String[]> fii = lerCSV("fii.csv");
-        for (String[] col : fii) {
+        List<String[]> fiiLinhas = lerCSV("fii.csv");
+        for (String[] col : fiiLinhas) {
             try {
-                FII a = new FII(col[0], col [1], Double.parseDouble(col[2]), Boolean.parseBoolean(col[3]), col[4], Double.parseDouble(col[5]), Double.parseDouble(col[6]));
-                bancoAtivos.put(a.getTicker().toUpperCase(), a);
-            } catch (Exception e) {
-                println("Erro ao carregar arquivo iniciais: " + e.getMessage());
-            }
+                double preco = parseDoubleGeral(col[3]);
+                double div = parseDoubleGeral(col[4]);
+                double taxa = parseDoubleGeral(col[5]);
+                FII f = new FII(col[1], col[0], preco, false, col[2], div, taxa);
+                bancoAtivos.put(f.getTicker().toUpperCase(), f);
+            } catch (Exception e) { }
         }
 
-        List<String[]> tesouro = lerCSV("tesouro.csv");
-        for (String[] col : tesouro) {
+        List<String[]> tesouroLinhas = lerCSV("tesouro.csv");
+        for (String[] col : tesouroLinhas) {
             try {
-                Tesouro a = new Tesouro(col[0], col [1], Double.parseDouble(col[2]), Boolean.parseBoolean(col[3]), col[4], col[5]);
-                bancoAtivos.put(a.getTicker().toUpperCase(), a);
-            } catch (Exception e) {
-                println("Erro ao carregar arquivo iniciais: " + e.getMessage());
-            }
+                double preco = parseDoubleGeral(col[2]);
+                Tesouro t = new Tesouro(col[1], col[0], preco, false, col[3], col[4]);
+                bancoAtivos.put(t.getTicker().toUpperCase(), t);
+            } catch (Exception e) { }
         }
 
-        List<String[]> stock = lerCSV("stock.csv");
-        for (String[] col : stock) {
+        List<String[]> stockLinhas = lerCSV("stock.csv");
+        for (String[] col : stockLinhas) {
             try {
-                Stock a = new Stock(col[0], col [1], Double.parseDouble(col[2]), Boolean.parseBoolean(col[3]),  col[4], col[5], Double.parseDouble(col[6]));
-                bancoAtivos.put(a.getTicker().toUpperCase(), a);
-            } catch (Exception e) {
-                println("Erro ao carregar arquivo iniciais: " + e.getMessage());
-            }
+                double preco = parseDoubleGeral(col[2]);
+                Stock s = new Stock(col[1], col[0], preco, false, col[3], col[4], 5.50);
+                bancoAtivos.put(s.getTicker().toUpperCase(), s);
+            } catch (Exception e) { }
         }
 
-        List<String[]> cripto = lerCSV("criptoativo.csv");
-        for (String[] col : cripto) {
+        List<String[]> criptoLinhas = lerCSV("criptoativo.csv");
+        for (String[] col : criptoLinhas) {
             try {
-                Criptomoeda a = new Criptomoeda(col[0], col [1], Double.parseDouble(col[2]), Boolean.parseBoolean(col[3]), col[4], Double.parseDouble(col[5]), Double.parseDouble(col[6]));
-                bancoAtivos.put(a.getTicker().toUpperCase(), a);
-            } catch (Exception e) {
-                println("Erro ao carregar arquivo iniciais: " + e.getMessage());
-            }
+                double preco = parseDoubleGeral(col[2]);
+                double qtdMax = col.length > 4 ? parseDoubleGeral(col[4]) : 0;
+                Criptomoeda c = new Criptomoeda(col[1], col[0], preco, false, col[3], qtdMax, 5.50);
+                bancoAtivos.put(c.getTicker().toUpperCase(), c);
+            } catch (Exception e) { }
         }
 
+        println("Carga finalizada! Total de ativos no banco: " + bancoAtivos.size());
     }
 
 
@@ -97,6 +113,7 @@ public class Main {
         }
     }
 
+
     public static void exibeMenuAtivos() {
         Scanner scanner = new Scanner(System.in);
         println("Esse é o menu de ativos!");
@@ -117,7 +134,7 @@ public class Main {
             } else if (escolha.equals("2")) {
                 println("Entrou no 2.");
             } else if (escolha.equals("3")) {
-                println("Entrou no 3.");
+                editarAtivo();
             } else if (escolha.equals("4")) {
                 println("Entrou no 4.");
             } else if (escolha.equals("5")) {
@@ -129,6 +146,7 @@ public class Main {
             }
         }
     }
+
 
     public static void cadastrarAtivo() {
         Scanner scanner = new Scanner(System.in);
@@ -192,6 +210,7 @@ public class Main {
         }
     }
 
+
     public static void cadastrarAtivoEmLote () {
         Scanner scanner = new Scanner(System.in);
 
@@ -224,6 +243,7 @@ public class Main {
         }
     }
 
+
     public static void exibirAtivosDoBanco () {
         println("LISTA DE ATIVOS NO SISTEMA:");
         for (Ativo a :  bancoAtivos.values()) {
@@ -231,54 +251,40 @@ public class Main {
         }
     }
 
+
     public static void editarAtivo () {
         Scanner scanner = new Scanner(System.in);
-        println("Qual tipo de ativo deseja editar? ");
-        println("1-Ação, 2-FII, 3-Stock, 4-Cripto, 5-Tesouro");
-        String tipoDoArquivo = scanner.nextLine();
+        exibirAtivosDoBanco();
+        println("Digite o ticker (ID) do ativo que deseja editar: ");
+        String tickerEditar = scanner.nextLine().trim().toUpperCase();
 
-        if (tipoDoArquivo.equals("1")) {
-            println("Digite o ticker (ID) do arquivo que deseja editar: ");
-            String tickerEditar = scanner.nextLine();
+        Ativo ativo = bancoAtivos.get(tickerEditar);
 
-            while (true) {
-                for (Ativo a :  bancoAtivos.values()) {
-                    if (a.getTicker().equals(tickerEditar.toUpperCase())) {
-                        println("O que deseja editar?");
-                        println("1- Nome, 2- Ticker, 3- Preço, 4- Qualificação, 5-SAIR");
-                        String escolha = scanner.nextLine();
+        if (ativo != null) {
+            String escolha = "";
+            while (!escolha.equals("0")) {
+                println("\nEditando: " + ativo.getNome());
+                println("1. Nome, 2. Ticker, 3. Preço, 4. Qualificação");
 
-                        if (escolha.equals("1")) {
-                            println("Digite o novo nome: ");
-                            String novoNome =  scanner.nextLine();
-                            a.setNome(novoNome);
-                        } else if  (escolha.equals("2")) {
-                            println("Digite o novo ticker: ");
-                            String novoTicker = scanner.nextLine();
-                            a.setTicker(novoTicker);
-                        } else if   (escolha.equals("3")) {
-                            println("Digite o novo preço: ");
-                        } else if (escolha.equals("4")) {
-                            println("Digite a nova qualificação (SIM/NÃO)");
-                            String novaQualificacao = scanner.nextLine();
-                            if (novaQualificacao.equalsIgnoreCase("SIM")) {
-                                a.setQualificado(true);
-                            } else if (novaQualificacao.equalsIgnoreCase("NÃO")) {
-                                a.setQualificado(false);
-                            } else {
-                                println("Valor inválido, tente novamente!");
-                                //logica para perguntar de novo a resposta
-                            }
-                        } else if   (escolha.equals("5")) {
-                            break;
-                        }
-                    }
+                String menuExtra = ativo.getMenuEspecifico();
+                if (!menuExtra.isEmpty()) {
+                    println(menuExtra);
+                }
+                println("0. Sair");
+
+                escolha = scanner.nextLine();
+
+                if (escolha.equals("1") || escolha.equals("2") || escolha.equals("3") || escolha.equals("4")) {
+                    ativo.editarCamposComuns(escolha, scanner);
+                } else if (!escolha.equals("0")) {
+                    ativo.editarCamposEspecificos(escolha, scanner);
                 }
             }
+        } else {
+            println("Ativo não encontrado!");
         }
-
-
     }
+
 
     public static void exibeMenuDeInvestidores() {
         Scanner scanner = new Scanner(System.in);
@@ -311,6 +317,7 @@ public class Main {
             }
         }
     }
+
 
     public static void exibeMenuDoInvestidor() {
         Scanner scanner = new Scanner(System.in);
@@ -362,13 +369,14 @@ public class Main {
         }
     }
 
+
     // ToDo: Passar esse trecho (e suas importações) para uma classe própria depois
     public static List<String[]> lerCSV(String nomeArquivo) {
         Path caminho = Paths.get(nomeArquivo);
         try (Stream<String> linhas = Files.lines(caminho)) { // linhas armazena o fluxo de strings, onde cada string é uma linha do arquivo
             return linhas
                     .skip(1) // Pula o cabeçalho
-                    .map(linha -> linha.split(",")) // Quebra a linha do registro em um array de strings, separados por virgulas
+                    .map(linha -> linha.split(";")) // Quebra a linha do registro em um array de strings, separados por virgulas
                     .collect(Collectors.toList()); // Pega todos os arrays e coloca dentro de uma lista
         } catch (IOException e) { // Se o arquivo não for encontrado na raiz
             System.err.println("ERRO: Não foi possível ler o arquivo: " + nomeArquivo);
@@ -376,9 +384,11 @@ public class Main {
         }
     }
 
+
     public static void println(String msg) {
         System.out.println(msg);
     }
+
 
     public static void print(String msg) {
         System.out.print(msg);
