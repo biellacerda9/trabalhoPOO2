@@ -129,7 +129,6 @@ public class Main {
             String escolha = scanner.nextLine();
 
             if (escolha.equals("1")) {
-                println("Entrou no 1.");
                 cadastrarAtivo();
             } else if (escolha.equals("2")) {
                 println("Entrou no 2.");
@@ -150,14 +149,25 @@ public class Main {
 
     public static void cadastrarAtivo() {
         Scanner scanner = new Scanner(System.in);
-        println("Escolha o tipo de ativo: 1-Ação, 2-FII, 3-Stock, 4-Cripto, 5-Tesouro");
+        println("Escolha o tipo de ativo: 1. Ação, 2. FII, 3. Stock, 4. Cripto, 5. Tesouro");
         String escolha = scanner.nextLine();
+
         println("Ticker: ");
         String ticker = scanner.nextLine();
         println("Nome: ");
         String nome = scanner.nextLine();
+
+        double preco = 0;
         println("Preço: ");
-        double preco = scanner.nextDouble();
+        try {
+            String entradaPreco = scanner.nextLine().replace(",", ".");
+            preco = Double.parseDouble(entradaPreco);
+        } catch (NumberFormatException e) {
+            println("ERRO: Preço inválido! O cadastro foi cancelado.");
+            println("Use apenas números e ponto ou vírgula para decimais.");
+            return;
+        }
+
         println("Qualificado? (S/N)");
         boolean qualificado = scanner.nextLine().equalsIgnoreCase("S");
 
@@ -168,45 +178,52 @@ public class Main {
 
         Ativo novoAtivo = null;
 
-        if (escolha.equals("1")) {
-            novoAtivo = new Acao(nome, ticker, preco, qualificado);
-        }
-        else if (escolha.equals("2")) {
-            println("Segmento: ");
-            String segmento = scanner.nextLine();
-            println("Valor do último dividendo: ");
-            double valorDividendo = scanner.nextDouble();
-            println("Taxa de administração: ");
-            double taxaAdm = scanner.nextDouble();
-            novoAtivo = new FII(nome, ticker, preco, qualificado,segmento, valorDividendo, taxaAdm);
-        } else if (escolha.equals("3")) {
-            println("Bolsa de Negociação: ");
-            String bolsa = scanner.nextLine();
-            println("Setor da empresa: ");
-            String setor = scanner.nextLine();
-            println("Fator de conversão: ");
-            double  fator = scanner.nextDouble();
-
-            novoAtivo = new Stock(nome, ticker, preco, qualificado,bolsa, setor, fator);
-        } else if (escolha.equals("4")) {
-            println("Algoritmo de consenso: ");
-            String algoritmo = scanner.nextLine();
-            println("Quantidade máxima de circulação: ");
-            double quantidade = scanner.nextDouble();
-            println("Fator de Conversão:");
-            double fator = scanner.nextDouble();
-            novoAtivo = new Criptomoeda(nome, ticker, preco, qualificado, algoritmo, quantidade, fator);
-        } else  if (escolha.equals("5")) {
-            println("Tipo de rendimento: ");
-
-            String tipo = scanner.nextLine();
-            println("Data de vencimento");
-            String dataVencimento = scanner.nextLine();
-            novoAtivo = new Tesouro(nome, ticker, preco, qualificado, tipo, dataVencimento);
-        }
-        else {
-            println("Tipo de ativo inválido.");
+        try {
+            if (escolha.equals("1")) {
+                novoAtivo = new Acao(nome, ticker, preco, qualificado);
+            } else if (escolha.equals("2")) {
+                println("Segmento: ");
+                String segmento = scanner.nextLine();
+                println("Valor do último dividendo: ");
+                double valorDividendo = Double.parseDouble(scanner.nextLine().replace(",", "."));
+                println("Taxa de administração: ");
+                double taxaAdm = Double.parseDouble(scanner.nextLine().replace(",", "."));
+                novoAtivo = new FII(nome, ticker, preco, qualificado, segmento, valorDividendo, taxaAdm);
+            } else if (escolha.equals("3")) {
+                println("Bolsa de Negociação: ");
+                String bolsa = scanner.nextLine();
+                println("Setor da empresa: ");
+                String setor = scanner.nextLine();
+                println("Fator de conversão: ");
+                double fator = Double.parseDouble(scanner.nextLine().replace(",", "."));
+                novoAtivo = new Stock(nome, ticker, preco, qualificado, bolsa, setor, fator);
+            } else if (escolha.equals("4")) {
+                println("Algoritmo de consenso: ");
+                String algoritmo = scanner.nextLine();
+                println("Quantidade máxima de circulação: ");
+                double quantidade = Double.parseDouble(scanner.nextLine().replace(",", "."));
+                println("Fator de Conversão:");
+                double fator = Double.parseDouble(scanner.nextLine().replace(",", "."));
+                novoAtivo = new Criptomoeda(nome, ticker, preco, qualificado, algoritmo, quantidade, fator);
+            } else if (escolha.equals("5")) {
+                println("Tipo de rendimento: ");
+                String tipo = scanner.nextLine();
+                println("Data de vencimento: ");
+                String dataVencimento = scanner.nextLine();
+                novoAtivo = new Tesouro(nome, ticker, preco, qualificado, tipo, dataVencimento);
+            } else {
+                println("Tipo de ativo inválido.");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            println("ERRO: Um dos valores numéricos específicos é inválido. Cadastro cancelado.");
             return;
+        }
+
+        // Salva no banco de dados
+        if (novoAtivo != null) {
+            bancoAtivos.put(ticker, novoAtivo);
+            println("Sucesso: Ativo " + ticker + " cadastrado!");
         }
     }
 
