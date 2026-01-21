@@ -132,7 +132,7 @@ public class Main {
             if (escolha.equals("1")) {
                 cadastrarAtivo();
             } else if (escolha.equals("2")) {
-                println("Entrou no 2.");
+                cadastrarAtivoEmLote();
             } else if (escolha.equals("3")) {
                 editarAtivo();
             } else if (escolha.equals("4")) {
