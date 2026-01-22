@@ -67,8 +67,19 @@ public class AtivoApp {
 
     public static void cadastrarAtivo() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Escolha o tipo de ativo: 1. Ação, 2. FII, 3. Stock, 4. Cripto, 5. Tesouro");
-        String escolha = scanner.nextLine();
+        String escolha = "";
+
+        while (true) {
+            System.out.println("Escolha o tipo de ativo: 1. Ação, 2. FII, 3. Stock, 4. Cripto, 5. Tesouro");
+            escolha = scanner.nextLine();
+
+            if (escolha.equals("1") || escolha.equals("2") || escolha.equals("3") ||
+                    escolha.equals("4") || escolha.equals("5")) {
+                break;
+            } else {
+                System.out.println("Opção INVÁLIDA! Por favor, escolbha um número de 1 a 5.");
+            }
+        }
 
         System.out.println("Ticker: ");
         String ticker = scanner.nextLine().toUpperCase();
@@ -76,18 +87,34 @@ public class AtivoApp {
         String nome = scanner.nextLine();
 
         double preco = 0;
-        System.out.println("Preço: ");
-        try {
+        while (true) {
+            System.out.println("Preço: ");
             String entradaPreco = scanner.nextLine().replace(",", ".");
-            preco = Double.parseDouble(entradaPreco);
-        } catch (NumberFormatException e) {
-            System.out.println("ERRO: Preço inválido! O cadastro foi cancelado.");
-            System.out.println("Use apenas números e ponto ou vírgula para decimais.");
-            return;
+
+            try {
+                preco = Double.parseDouble(entradaPreco);
+
+                if (preco > 0) break;
+                else System.out.println("ERRO! O preço deve ser maior que ZERO.");
+            } catch (NumberFormatException e) {
+                System.out.println("ERRO: O valor não pode conter letras.");
+                System.out.println("Use apenas números e ponto ou vírgula para decimais.");
+            }
         }
 
-        System.out.println("Qualificado? (S/N)");
-        boolean qualificado = scanner.nextLine().equalsIgnoreCase("S");
+        boolean qualificado = false;
+        while (true) {
+            System.out.println("Qualificado? (S/N)");
+            String entrada = scanner.nextLine().trim().toUpperCase();
+
+            if (entrada.equals("S")) {
+                qualificado = true;
+                break;
+            } else if (entrada.equals("N")) {
+                qualificado = false;
+                break;
+            } else System.out.println("ERRO: Entrada inválida! Digite apenas 'S' para SIM ou 'N' para NÃO.");
+        }
 
         if (ticker == null || ticker.isEmpty() || preco <= 0) {
             System.out.println("Erro ao cadastrar ativo. Tente novamente.");
@@ -96,32 +123,80 @@ public class AtivoApp {
 
         br.ufjf.dcc.model.ativos.Ativo novoAtivo = null;
 
-        try {
             if (escolha.equals("1")) {
                 novoAtivo = new Acao(nome, ticker, preco, qualificado);
             } else if (escolha.equals("2")) {
                 System.out.println("Segmento: ");
                 String segmento = scanner.nextLine();
-                System.out.println("Valor do último dividendo: ");
-                double valorDividendo = Double.parseDouble(scanner.nextLine().replace(",", "."));
-                System.out.println("Taxa de administração: ");
-                double taxaAdm = Double.parseDouble(scanner.nextLine().replace(",", "."));
+
+                double valorDividendo = 0;
+                while (true) {
+                    try {
+                        System.out.println("Valor do último dividendo: ");
+                        valorDividendo = Double.parseDouble(scanner.nextLine().replace(",", "."));
+                        if (valorDividendo >= 0) break;
+                        System.out.println("ERRO: O dividendo não pode ser negativo.");
+                    } catch (NumberFormatException e) {
+                        System.out.println("ERRO: Digite um valor numérico válido!");
+                    }
+                }
+
+                double taxaAdm = 0;
+                while(true) {
+                    try {
+                        System.out.println("Taxa de administração: ");
+                        taxaAdm = Double.parseDouble(scanner.nextLine().replace(",", "."));
+                        if (taxaAdm >= 0) break;
+                        System.out.println("ERRO: A taxa de administração não pode ser negativa.");
+                    }catch (NumberFormatException e) {
+                        System.out.println("Erro: Digite um valor numérico válido!");
+                    }
+                }
                 novoAtivo = new FII(nome, ticker, preco, qualificado, segmento, valorDividendo, taxaAdm);
             } else if (escolha.equals("3")) {
                 System.out.println("Bolsa de Negociação: ");
                 String bolsa = scanner.nextLine();
                 System.out.println("Setor da empresa: ");
                 String setor = scanner.nextLine();
-                System.out.println("Fator de conversão: ");
-                double fator = Double.parseDouble(scanner.nextLine().replace(",", "."));
+
+                double fator = 0;
+                while (true) {
+                    try {
+                        System.out.println("Fator de conversão: ");
+                        fator = Double.parseDouble(scanner.nextLine().replace(",", "."));
+                        if (fator >= 0) break;
+                        System.out.println("ERRO: O fator de conversão não pode ser negativo.");
+                    }catch (NumberFormatException e) {
+                        System.out.println("Erro: Digite um valor numérico válido!");
+                    }
+                }
                 novoAtivo = new Stock(nome, ticker, preco, qualificado, bolsa, setor, fator);
             } else if (escolha.equals("4")) {
                 System.out.println("Algoritmo de consenso: ");
                 String algoritmo = scanner.nextLine();
-                System.out.println("Quantidade máxima de circulação: ");
-                double quantidade = Double.parseDouble(scanner.nextLine().replace(",", "."));
-                System.out.println("Fator de Conversão:");
-                double fator = Double.parseDouble(scanner.nextLine().replace(",", "."));
+
+                double quantidade = 0;
+                while (true) {
+                    try {
+                        System.out.println("Quantidade máxima de circulação: ");
+                        quantidade = Double.parseDouble(scanner.nextLine().replace(",", "."));
+                        if (quantidade >=0) break;
+                        System.out.println("ERRO: A quantidade não pode ser negativa.");
+                    }catch (NumberFormatException e) {
+                        System.out.println("Erro: Digite um valor numérico válido!");
+                    }
+                }
+                double fator = 0;
+                while (true) {
+                    try {
+                        System.out.println("Fator de conversão: ");
+                        fator = Double.parseDouble(scanner.nextLine().replace(",", "."));
+                        if (fator >= 0) break;
+                        System.out.println("ERRO: O fator de conversão não pode ser negativo.");
+                    }catch (NumberFormatException e) {
+                        System.out.println("Erro: Digite um valor numérico válido!");
+                    }
+                }
                 novoAtivo = new Criptomoeda(nome, ticker, preco, qualificado, algoritmo, quantidade, fator);
             } else if (escolha.equals("5")) {
                 System.out.println("Tipo de rendimento: ");
@@ -133,10 +208,6 @@ public class AtivoApp {
                 System.out.println("Tipo de ativo inválido.");
                 return;
             }
-        } catch (NumberFormatException e) {
-            System.out.println("ERRO: Um dos valores numéricos específicos é inválido. Cadastro cancelado.");
-            return;
-        }
 
         // Salva no banco de dados
         if (novoAtivo != null) {
@@ -149,8 +220,17 @@ public class AtivoApp {
     public static void cadastrarAtivoEmLote () {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Digite o caminho do arquivo (ex: acoes.csv): ");
-        String caminho = scanner.nextLine();
+        String caminho = "";
+        while (true) {
+            try {
+                System.out.println("Digite o caminho do arquivo (ex: acoes.csv): ");
+                caminho = scanner.nextLine();
+                if (caminho.endsWith(".csv")) break;
+                System.out.println("ERRO: O caminho do arquivo precisa terminar com '.csv'.");
+            }catch (IllegalArgumentException e) {
+                System.out.println("ERRO: Digite um caminho válido para o arquivo.");
+            }
+        }
 
         System.out.println("Digite o tipo de ativos presente neste arquivo: ");
         System.out.println("1-Ação, 2-FII, 3-Stock, 4-Cripto, 5-Tesouro)");
@@ -230,16 +310,24 @@ public class AtivoApp {
 
         br.ufjf.dcc.model.ativos.Ativo ativo = bancoAtivos.get(tickerExcluir);
 
+        String escolha = "";
         if (ativo != null) {
-            System.out.print("Tem certeza que deseja excluir " + ativo.getTicker() + " | " + ativo.getNome() + "? "  + "(S/N)");
-            String escolha = scanner.nextLine().trim().toUpperCase();
-            if (escolha.equals("S")) {
-                bancoAtivos.remove(tickerExcluir);
-                System.out.println("Excluido com sucesso!");
-                return;
-            } else if (escolha.equals("N")) {
-                System.out.println("Exclusão cancelada. \nSaindo da exclusão...");
-                return;
+            while (true) {
+                try {
+                    System.out.print("Tem certeza que deseja excluir " + ativo.getTicker() + " | " + ativo.getNome() + "? "  + "(S/N) ");
+                    escolha = scanner.nextLine().trim().toUpperCase();
+                    if (escolha.equals("S")) {
+                        bancoAtivos.remove(tickerExcluir);
+                        System.out.println("Excluido com sucesso!");
+                        return;
+                    } else if (escolha.equals("N")) {
+                        System.out.println("Exclusão cancelada. \nSaindo da exclusão...");
+                        return;
+                    }
+                    System.out.println("ERRO: Entrada inválida! Digite 'S' para sim e 'N' para não");
+                }catch (Exception e) {
+                    System.out.println("ERRO: Digite um valor válido.");
+                }
             }
         }
     }
