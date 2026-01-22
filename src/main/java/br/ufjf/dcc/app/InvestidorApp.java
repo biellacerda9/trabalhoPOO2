@@ -1,8 +1,14 @@
 package br.ufjf.dcc.app;
 
+import br.ufjf.dcc.io.CSVReader;
 import br.ufjf.dcc.model.Endereco;
 import br.ufjf.dcc.model.PerfilInvestimento;
+import br.ufjf.dcc.model.ativos.*;
+
+import java.util.List;
 import java.util.Scanner;
+
+import static br.ufjf.dcc.data.BancoAtivos.bancoAtivos;
 
 public class InvestidorApp {
 
@@ -67,6 +73,40 @@ public class InvestidorApp {
             String cnpj = scanner.nextLine();
             // arrumar aqui depois de arrumar a carteira
             //novoInv = new PessoaInstitucional();
+        }
+    }
+
+//estagio ainda inicial, precisa de ajustes e finalizar implementações
+    public static void cadastrarInvestidorEmLote () {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Digite o caminho do arquivo (ex: investidores.csv): ");
+        String caminho = scanner.nextLine();
+
+        System.out.println("Digite o tipo de investidores presente neste arquivo: ");
+        System.out.println("1- Pessoa Física, 2- Pessoa Institucional");
+        String tipoDoArquivo = scanner.nextLine();
+
+        List<String[]> linhas = CSVReader.lerCSV(caminho);
+
+        for  (String[] col : linhas) {
+            br.ufjf.dcc.model.Investidor novoInvestidor = null;
+
+            br.ufjf.dcc.model.Carteira carteira = new br.ufjf.dcc.model.Carteira(null);
+
+            if (tipoDoArquivo.equals("1")) {
+
+                String textoPerfil = col[11];
+                PerfilInvestimento perfil;
+
+                if (textoPerfil.equalsIgnoreCase("conservador")) {
+                    perfil = PerfilInvestimento.CONSERVADOR;
+                } else if (textoPerfil.equalsIgnoreCase("moderado")) {
+                    perfil = PerfilInvestimento.MODERADO;
+                } else {
+                    perfil = PerfilInvestimento.ARROJADO;
+                }
+            }
         }
     }
 }

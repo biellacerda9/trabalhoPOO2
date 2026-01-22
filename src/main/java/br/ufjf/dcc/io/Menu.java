@@ -2,6 +2,7 @@ package br.ufjf.dcc.io;
 
 import java.util.Scanner;
 import static br.ufjf.dcc.app.AtivoApp.*;
+import static br.ufjf.dcc.app.InvestidorApp.*;
 
 public class Menu {
 
@@ -78,8 +79,10 @@ public class Menu {
 
             if (escolha.equals("1")) {
                 System.out.println("Entrou no 1.");
+                cadastrarInvestidor();
             } else if (escolha.equals("2")) {
                 System.out.println("Entrou no 2.");
+
             } else if (escolha.equals("3")) {
                 System.out.println("Entrou no 3.");
             } else if (escolha.equals("4")) {
