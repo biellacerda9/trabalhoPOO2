@@ -2,6 +2,7 @@ package br.ufjf.dcc.model;
 
 
 import br.ufjf.dcc.model.ativos.Ativo;
+import br.ufjf.dcc.model.ativos.Tesouro;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -66,12 +67,22 @@ public class Carteira {
 
     //Pegar o valor total da carteira, somar todos os ativos que tem renda fixa e apos dividir
     //pela pelo valor total da carteira. Mesmo processo pra renda variavel
-//    public double getPercentualRendaFixa() {
-//        double totalCarteira = getValorTotalAtual();
-//        if (totalCarteira == 0) return 0;
-//
-//        return porcentagem;
-//    }
+
+    public double getPercentualRendaFixa() {
+        double totalCarteira = getValorTotalAtual();
+        if (totalCarteira == 0) return 0;
+
+        double valorTotalFixo = 0;
+        for (ItemCarteira a: itens.values()){
+            if(a.getAtivo().getTipoRenda().equals("Fixa")){
+                valorTotalFixo += a.getAtivo().getPrecoAtual();
+            }
+        }
+
+        double porcentagem =  (valorTotalFixo / totalCarteira) * 100;
+
+        return porcentagem;
+    }
 //
 //    public double getPercentualRendaVariavel() {
 //        double totalCarteira = getValorTotalAtual();
