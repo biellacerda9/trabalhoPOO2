@@ -79,17 +79,50 @@ public class Carteira {
             }
         }
 
-        double porcentagem =  (valorTotalFixo / totalCarteira) * 100;
-
-        return porcentagem;
+        return  (valorTotalFixo / totalCarteira) * 100;
     }
-//
-//    public double getPercentualRendaVariavel() {
-//        double totalCarteira = getValorTotalAtual();
-//
-//        return porcentagem;
-//    }
 
+    public double getPercentualRendaVariavel() {
+        double totalCarteira = getValorTotalAtual();
+        if (totalCarteira == 0) return 0;
+
+        double valorTotalVariavel = 0;
+        for (ItemCarteira a: itens.values()){
+            if(a.getAtivo().getTipoRenda().equals("Variável")){
+                valorTotalVariavel += a.getAtivo().getPrecoAtual();
+            }
+        }
+
+        return (valorTotalVariavel / totalCarteira) * 100;
+    }
+
+    public double getPercentualNacional() {
+        double totalCarteira = getValorTotalAtual();
+        if (totalCarteira == 0) return 0;
+
+        double totalProdutosNacionais = 0;
+        for (ItemCarteira a: itens.values()){
+            if(a.getAtivo().ehNacional()){
+                totalProdutosNacionais += a.getAtivo().getPrecoAtual();
+            }
+        }
+
+        return  (totalProdutosNacionais / totalCarteira) * 100;
+    }
+
+    public double getPercentualInteracional() {
+        double totalCarteira = getValorTotalAtual();
+        if (totalCarteira == 0) return 0;
+
+        double totalProdutosInternacionais = 0;
+        for (ItemCarteira a: itens.values()){
+            if(!a.getAtivo().ehNacional()){
+                totalProdutosInternacionais += a.getAtivo().getPrecoAtual();
+            }
+        }
+
+        return (totalProdutosInternacionais / totalCarteira) * 100;
+    }
 
     public static void println(String msg) {
         System.out.println(msg);
