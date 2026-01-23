@@ -87,6 +87,7 @@ public class Menu {
                 System.out.println("Entrou no 3.");
                 exibirInvestidores();
             } else if (escolha.equals("4")) {
+                excluirInvestidor();
                 System.out.println("Entrou no 4.");
             } else if (escolha.equals("5")) {
                 System.out.println("Entrou no 5.");

@@ -99,6 +99,7 @@ public class InvestidorApp {
             novoInv = new PessoaFisica(nome, cpf, telefone, dataNascimento, endereco, patrimonio, carteira, perfil);
 
             if(novoInv != null){
+                System.out.println("\nInvestidor cadastrado com sucesso!\n");
                 bancoInvestidor.put(nome, novoInv);
             }
         } else  if (escolha.equals("2")) {
@@ -228,6 +229,36 @@ public class InvestidorApp {
             } else {
                 System.out.println("Valor inválido. Digite novamente!");
                 return;
+            }
+        }
+    }
+
+    public static void excluirInvestidor () {
+        Scanner scanner = new Scanner(System.in);
+        exibirInvestidores();
+        System.out.println("Digite o CPF/CNPJ do investidor que deseja excluir: ");
+        String investidorExcluir = scanner.nextLine().trim().toUpperCase();
+
+        br.ufjf.dcc.model.Investidor investidor = bancoInvestidor.get(investidorExcluir);
+
+        String escolha = "";
+        if (investidor != null) {
+            while (true) {
+                try {
+                    System.out.print("Tem certeza que deseja excluir " + investidor.getNome() + " | " + investidor.getIdentificador() + "? "  + "(S/N) ");
+                    escolha = scanner.nextLine().trim().toUpperCase();
+                    if (escolha.equals("S")) {
+                        bancoAtivos.remove(investidorExcluir);
+                        System.out.println("Excluido com sucesso!");
+                        return;
+                    } else if (escolha.equals("N")) {
+                        System.out.println("Exclusão cancelada. \nSaindo da exclusão...");
+                        return;
+                    }
+                    System.out.println("ERRO: Entrada inválida! Digite 'S' para sim e 'N' para não");
+                }catch (Exception e) {
+                    System.out.println("ERRO: Digite um valor válido.");
+                }
             }
         }
     }
