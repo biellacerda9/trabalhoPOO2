@@ -354,29 +354,68 @@ public class InvestidorApp {
         }
     }
 
-    //tem que refatorar tudo isso aqui, pq o jeito de excluir é diferente
 
-//    public static void excluirInvestidor () {
-//        Scanner scanner = new Scanner(System.in);
-//        //exibirInvestidores();
-//        System.out.println("Digite o CPF/CNPJ do investidor que deseja excluir: ");
-//        String investidorExcluir = scanner.nextLine().replaceAll("\\D", "");
-//
-//        br.ufjf.dcc.model.Investidor investidor = bancoInvestidor.get(investidorExcluir);
-//
-//        if (investidor != null) {
-//            while (true) {
-//                System.out.print("Tem certeza que deseja excluir " + investidor.getNome() + " | " + investidor.getIdentificador() + "? "  + "(S/N) ");
-//                String escolha = scanner.nextLine().trim().toUpperCase();
-//                if (escolha.equals("S")) {
-//                    bancoInvestidor.remove(investidorExcluir);
-//                    System.out.println("Excluido com sucesso!");
-//                    return;
-//                } else if (escolha.equals("N")) {
-//                    System.out.println("Exclusão cancelada. \nSaindo da exclusão...");
-//                    return;
-//                }else System.out.println("ERRO: Entrada inválida! Digite 'S' para sim e 'N' para não");
-//            }
-//        } else System.out.println("ERRO: Investidor com id " + investidor.getIdentificador() + " não encontrado no sistema.");
-//    }
+    public static void excluirInvestidor () {
+        Scanner scanner = new Scanner(System.in);
+        imprimirResumo();
+
+        while (true) {
+            System.out.print("Digite o CPF/CNPJ dos investidores que deseja excluir separados por vŕigula (ou 'S' para sair): ");
+            String escolha = scanner.nextLine();
+
+            if (escolha.equalsIgnoreCase("S")) {
+                System.out.println("Saindo do processo de exclusão...");
+                break;
+            }
+
+            String[] listaParaExcluir = escolha.split(",");
+
+            for (String item : listaParaExcluir) {
+                String cpfInvestidor = item.trim().replaceAll("\\D", "");
+
+                if (cpfInvestidor.isEmpty()) {
+                    continue;
+                }
+
+                if (bancoInvestidor.containsKey(cpfInvestidor)) {
+                    bancoInvestidor.remove(cpfInvestidor);
+                    System.out.println("Sucesso: Investidor [" + cpfInvestidor + "] e sua carteira foram removidos.");
+                } else {
+                    System.err.println("Erro: Investidor com documento [" + cpfInvestidor + "] não encontrado.");
+                }
+                System.out.println("\n>>> Processo concluído.");
+            }
+        }
+    }
+
+
+    public static Investidor selecionarInvestidor() {
+        Scanner scanner = new Scanner(System.in);
+        imprimirResumo();
+
+        while (true) {
+            System.out.print("Digite o CPF/CNPJ do investidor que deseja selecionar (ou 'S' para sair): ");
+            String escolha = scanner.nextLine().trim();
+
+            if (escolha.equalsIgnoreCase("S")) return null;
+
+            String cpfInvestidorSelecionado = escolha.replaceAll("\\D", "");
+            br.ufjf.dcc.model.Investidor investidor = bancoInvestidor.get(cpfInvestidorSelecionado);
+
+            if (investidor != null) {
+                return investidor;
+            }
+            System.err.println("Erro: Investidor com CPF/CNPJ " + cpfInvestidorSelecionado + " não encontrado no sistema.");
+        }
+    }
+
+
+    // Função auxiliar para printar os investidores
+    public static void imprimirResumo() {
+        System.out.println("\n--- Lista de Investidores Registrados ---");
+        for (Investidor a : bancoInvestidor.values()) {
+            System.out.println(a.getNome() + " | CPF: " + a.getIdentificador());
+        }
+        System.out.println("------------------------------------------");
+    }
 }

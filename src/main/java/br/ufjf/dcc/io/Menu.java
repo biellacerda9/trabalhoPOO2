@@ -86,7 +86,13 @@ public class Menu {
             } else if (escolha.equals("4")) {
                 excluirInvestidor();
             } else if (escolha.equals("5")) {
-                System.out.println("Entrou no 5.");
+                br.ufjf.dcc.model.Investidor investidor = selecionarInvestidor();
+
+                if (investidor != null) {
+                    exibeMenuDoInvestidor(investidor);
+                } else {
+                    System.out.println("Seleção cancelada.");
+                }
             } else if (escolha.equals("6")) {
                 break;
             } else {
@@ -96,7 +102,7 @@ public class Menu {
     }
 
 
-    public static void exibeMenuDoInvestidor() {
+    public static void exibeMenuDoInvestidor(br.ufjf.dcc.model.Investidor investidor) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Esse é o menu do investidor!");
 
