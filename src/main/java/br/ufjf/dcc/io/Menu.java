@@ -65,7 +65,7 @@ public class Menu {
 
     public static void exibeMenuDeInvestidores() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Esse é o menu de investidores!");
+        System.out.println("\nEsse é o menu de investidores!");
 
         while(true){
             System.out.println("1. Cadastrar investidor");
@@ -82,9 +82,10 @@ public class Menu {
                 cadastrarInvestidor();
             } else if (escolha.equals("2")) {
                 System.out.println("Entrou no 2.");
-
+                cadastrarInvestidorEmLote();
             } else if (escolha.equals("3")) {
                 System.out.println("Entrou no 3.");
+                exibirInvestidores();
             } else if (escolha.equals("4")) {
                 System.out.println("Entrou no 4.");
             } else if (escolha.equals("5")) {

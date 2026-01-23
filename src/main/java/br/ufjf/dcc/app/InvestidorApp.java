@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import static br.ufjf.dcc.data.BancoAtivos.bancoAtivos;
+import static br.ufjf.dcc.data.BancoInvestidor.bancoInvestidor;
 
 public class InvestidorApp {
 
@@ -57,8 +58,17 @@ public class InvestidorApp {
         String rua = scanner.nextLine();
 
         System.out.println("Número: ");
-        int numero = scanner.nextInt();
-        scanner.nextLine();
+        int numero;
+        while(true) {
+            if(scanner.hasNextInt()) {
+                numero = scanner.nextInt();
+                scanner.nextLine();
+                break;
+            } else {
+                System.out.println("Valor inválido. Digite novamente!");
+                scanner.next();
+            }
+        }
 
         Endereco endereco = new Endereco(rua,numero,bairro,cidade,estado,cep);
 
@@ -70,25 +80,38 @@ public class InvestidorApp {
         if (escolha.equals("1")) {
             System.out.println("CPF: ");
             String cpf = scanner.nextLine();
-            System.out.println("Perfil de investimento (Conservador, Moderado ou Arrojado): ");
+
+            System.out.println("Perfil de investimento : [1] Conservador | [2] Moderado | [3] Arrojado ");
             String perfilString =  scanner.nextLine();
             PerfilInvestimento perfil;
 
-            if (perfilString.equalsIgnoreCase("conservador")) {
+            if (perfilString.equals("1")) {
                 perfil = PerfilInvestimento.CONSERVADOR;
-            } else if  (perfilString.equalsIgnoreCase("moderado")) {
+            } else if  (perfilString.equals("2")) {
                 perfil = PerfilInvestimento.MODERADO;
-            } else {
+            } else if (perfilString.equals("3")) {
                 perfil = PerfilInvestimento.ARROJADO;
+            } else {
+                System.out.println("Valor Invalido. Cancelando cadastro!");
+                return;
             }
 
             novoInv = new PessoaFisica(nome, cpf, telefone, dataNascimento, endereco, patrimonio, carteira, perfil);
+
+            if(novoInv != null){
+                bancoInvestidor.put(nome, novoInv);
+            }
         } else  if (escolha.equals("2")) {
             System.out.println("CNPJ: ");
             String cnpj = scanner.nextLine();
             System.out.println("Razão Social: ");
             String razaoSocial = scanner.nextLine();
             novoInv = new PessoaInstitucional(nome, cnpj, telefone, dataNascimento, endereco, patrimonio, carteira, razaoSocial);
+
+            if(novoInv != null){
+                bancoInvestidor.put(novoInv.getIdentificador(), novoInv);
+                System.out.println("\nInvestidor cadastrado com sucesso!\n");
+            }
         }
     }
 
@@ -143,8 +166,69 @@ public class InvestidorApp {
                 }
 
                 if (novoInv != null) {
-                    //criar banco investidor
+                    bancoInvestidor.put(novoInv.getIdentificador(), novoInv);
+                    System.out.println("\nLote de investidores cadastrados com sucesso!\n");
                 }
+        }
+    }
+
+    public static void exibirInvestidores () {
+        int paginaAtual= 0;
+        int itensPorPagina = 50;
+
+        while(true) {
+            System.out.println("\n------- PÁGINA " + (paginaAtual + 1) + " -------");
+            int contadorGeral = 0;
+            int contadorExibidos = 0;
+            int pulaPagina = paginaAtual * itensPorPagina;
+
+            boolean temMaisPagina = false;
+
+            for (br.ufjf.dcc.model.Investidor a: bancoInvestidor.values()) {
+                if(contadorGeral < pulaPagina){
+                    contadorGeral++;
+                    continue;
+                }
+
+                if(contadorExibidos < itensPorPagina){
+                    System.out.println(a.getNome() + " | " + a.getIdentificador());
+                    contadorExibidos++;
+                    contadorGeral++;
+                } else {
+                    temMaisPagina = true;
+                    break;
+                }
+            }
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("\n-----");
+            if(paginaAtual > 0 ){
+                System.out.print(" [A] Anterior |");
+            }
+            if (temMaisPagina){
+                System.out.print(" [P] Proximo |");
+            }
+            System.out.print(" [S] Sair ");
+            System.out.print("-----\n");
+            String opcao = scanner.nextLine().toUpperCase();
+
+            if(opcao.equals("P")){
+                if(temMaisPagina){
+                    paginaAtual++;
+                } else {
+                    System.out.println("Você está na ultima página!");
+                }
+            } else if (opcao.equals("A")){
+                if (paginaAtual > 0) {
+                    paginaAtual--;
+                } else {
+                    System.out.println("Você está na primeira página");
+                }
+            } else if (opcao.equals("S")){
+                break;
+            } else {
+                System.out.println("Valor inválido. Digite novamente!");
+                return;
+            }
         }
     }
 }

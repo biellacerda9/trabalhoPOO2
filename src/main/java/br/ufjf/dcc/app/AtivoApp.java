@@ -260,9 +260,62 @@ public class AtivoApp {
 
 
     public static void exibirAtivosDoBanco () {
-        System.out.println("LISTA DE ATIVOS NO SISTEMA:");
-        for (br.ufjf.dcc.model.ativos.Ativo a :  bancoAtivos.values()) {
-            System.out.println(a.getTicker() + " | " + a.getNome() + " | Preço Atual: R$ " + a.getPrecoAtual());
+        int paginaAtual= 0;
+        int itensPorPagina = 50;
+
+        while(true) {
+            System.out.println("\n------- PÁGINA " + (paginaAtual + 1) + " -------");
+            int contadorGeral = 0;
+            int contadorExibidos = 0;
+            int pulaPagina = paginaAtual * itensPorPagina;
+
+            boolean temMaisPagina = false;
+
+            for (br.ufjf.dcc.model.ativos.Ativo a : bancoAtivos.values()) {
+                if(contadorGeral < pulaPagina){
+                    contadorGeral++;
+                    continue;
+                }
+
+                if(contadorExibidos < itensPorPagina){
+                    System.out.println(a.getTicker() + " | " + a.getNome() + " | Preço Atual: R$ " + a.getPrecoAtual());
+                    contadorExibidos++;
+                    contadorGeral++;
+                } else {
+                    temMaisPagina = true;
+                    break;
+                }
+            }
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("\n-----");
+            if(paginaAtual > 0 ){
+                System.out.print(" [A] Anterior |");
+            }
+            if (temMaisPagina){
+                System.out.print(" [P] Proximo |");
+            }
+            System.out.print(" [S] Sair ");
+            System.out.print("-----\n");
+            String opcao = scanner.nextLine().toUpperCase();
+
+            if(opcao.equals("P")){
+                if(temMaisPagina){
+                    paginaAtual++;
+                } else {
+                    System.out.println("Você está na ultima página!");
+                }
+            } else if (opcao.equals("A")){
+                if (paginaAtual > 0) {
+                    paginaAtual--;
+                } else {
+                    System.out.println("Você está na primeira página");
+                }
+            } else if (opcao.equals("S")){
+                break;
+            } else {
+                System.out.println("Valor inválido. Digite novamente!");
+                return;
+            }
         }
     }
 
