@@ -78,17 +78,13 @@ public class Menu {
             String escolha = scanner.nextLine();
 
             if (escolha.equals("1")) {
-                System.out.println("Entrou no 1.");
                 cadastrarInvestidor();
             } else if (escolha.equals("2")) {
-                System.out.println("Entrou no 2.");
                 cadastrarInvestidorEmLote();
             } else if (escolha.equals("3")) {
-                System.out.println("Entrou no 3.");
                 exibirInvestidores();
             } else if (escolha.equals("4")) {
                 excluirInvestidor();
-                System.out.println("Entrou no 4.");
             } else if (escolha.equals("5")) {
                 System.out.println("Entrou no 5.");
             } else if (escolha.equals("6")) {
