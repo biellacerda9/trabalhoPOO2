@@ -12,6 +12,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+
+import static br.ufjf.dcc.data.BancoAtivos.bancoAtivos;
 import static br.ufjf.dcc.data.BancoInvestidor.bancoInvestidor;
 
 public class InvestidorApp {
@@ -437,7 +439,7 @@ public class InvestidorApp {
                     System.err.println("Erro: Investidor não encontrado.");
                 }
 
-                return; //encerra o método após responder "S"
+                return;
             }
 
             if (escolha.equalsIgnoreCase("N")) {
@@ -659,5 +661,94 @@ public class InvestidorApp {
                 break;
             } else System.out.println("Opção inválida!");
         }
+    }
+
+    public static void movimentarCompra(Investidor investidor) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("\nSaldo atual: " + investidor.getPatrimonio());
+
+        System.out.println("\nDigite o TICKER (ID) do ativo que deseja comprar: ");
+        String ticker = scanner.nextLine().toUpperCase().trim();
+        if (!bancoAtivos.containsKey(ticker)) {
+            System.out.println("ERRO: Esse ticker não foi encontrado no sistema.");
+        }
+
+        Ativo ativo = bancoAtivos.get(ticker);
+
+        System.out.println("\nAtivo selecionado: " + ativo.getNome() + " | " + ativo.getPrecoAtual());
+
+        double quantidade = 0;
+        System.out.println("Digite a quantidade desejada: ");
+        quantidade = scanner.nextDouble();
+        scanner.nextLine();
+        System.out.println("Instituição responsável pela movimentação:");
+        String instituicao = scanner.nextLine();
+
+        String resultado = investidor.cadastrarInvestimento(ativo, quantidade, ativo.getPrecoAtual(), "COMPRA",  instituicao);
+        System.out.println("\nResultado: " + resultado);
+    }
+
+    public static void movimentarVenda (Investidor investidor) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("\nSaldo atual: " + investidor.getPatrimonio());
+
+        investidor.getCarteira().exibirAtivos();
+
+        if (investidor.getCarteira().getItens().isEmpty()) {
+            System.out.println("ERRO: Carteira não possui nenhum ativo!");
+            return;
+        }
+
+
+        System.out.println("\nDigite o TICKER (ID) do ativo que deseja vender: ");
+        String ticker = scanner.nextLine().toUpperCase().trim();
+
+        if (!bancoAtivos.containsKey(ticker)) {
+            System.out.println("ERRO: Esse ticker não foi encontrado no sistema.");
+        }
+
+        Carteira carteira = investidor.getCarteira();
+        ItemCarteira item = carteira.getItens().get(ticker);
+        Ativo ativo = item.getAtivo();
+
+        System.out.println("\nAtivo selecionado: " + ativo.getNome() + " | " + ativo.getPrecoAtual());
+        double quantidadeDisponivel = item.getQuantidade();
+        System.out.println("Você possui " + quantidadeDisponivel + " unidades de " + ticker);
+
+        String desejo = "";
+        double quantidadeVender = 0;
+        while (true) {
+            System.out.println("Escolha uma opção: ");
+            System.out.print("1.Vender tudo, 2.Vender quantidade personalizada");
+            desejo = scanner.nextLine();
+
+            if (desejo.equals("1")) {
+                quantidadeVender = quantidadeDisponivel;
+            } else if  (desejo.equals("2")) {
+                System.out.println("Quanto deseja vender: ");
+
+                try {
+                    quantidadeVender = scanner.nextDouble();
+
+                    if (quantidadeVender > quantidadeDisponivel) {
+                        System.out.println("ERRO: Você possui apenas " + quantidadeDisponivel + " unidades.");
+                        break;
+                    }
+                    if (quantidadeVender <= 0) {
+                        System.out.println("ERRO: A quantidade desejada deve ser maior que 0.");
+                        break;
+                    }
+                }catch (Exception e) {
+                    System.out.println("ERRO: Entrada inválida!");
+                }
+            } else System.out.println("ERRO: Opção inválida! Tente novamente!");
+        }
+
+        System.out.println("Instituição responsável pela movimentação:");
+        String instituicao = scanner.nextLine();
+
+        String resultado = investidor.cadastrarInvestimento(ativo, quantidadeVender, ativo.getPrecoAtual(), "VENDA",  instituicao);
+        System.out.println("\nResultado: " + resultado);
+
     }
 }

@@ -84,9 +84,16 @@ public abstract class Investidor {
 
         boolean sucesso = false;
         if (tipo.equalsIgnoreCase("COMPRA")) {
-            this.carteira.adicionarAtivos(ativo, quantidade, preco);
-            sucesso = true;
+            double valorTotalAtual = quantidade * preco;
+
+            if (this.getPatrimonio() >= valorTotalAtual) {
+                this.setPatrimonio(this.getPatrimonio() - valorTotalAtual);
+                this.carteira.adicionarAtivos(ativo, quantidade, preco);
+                sucesso = true;
+            }
         }else if (tipo.equalsIgnoreCase("VENDA")) {
+            double valorTotalAtual = quantidade * preco;
+            this.setPatrimonio(this.getPatrimonio() + valorTotalAtual);
             sucesso = this.carteira.removerAtivo(ativo.getTicker(), quantidade);
         }
         if (sucesso) {

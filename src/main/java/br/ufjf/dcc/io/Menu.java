@@ -1,5 +1,7 @@
 package br.ufjf.dcc.io;
 
+import br.ufjf.dcc.model.Movimentacao;
+
 import java.util.Scanner;
 import static br.ufjf.dcc.app.AtivoApp.*;
 import static br.ufjf.dcc.app.InvestidorApp.*;
@@ -154,9 +156,9 @@ public class Menu {
             } else if (escolha.equals("8")) {
                 salvarRelatorio(investidor);
             } else if (escolha.equals("9")) {
-                System.out.println("Entrou no 9.");
+                movimentarCompra(investidor);
             } else if (escolha.equals("10")) {
-                System.out.println("Entrou no 10.");
+                movimentarVenda(investidor);
             } else if (escolha.equals("11")) {
                 System.out.println("Entrou no 11.");
             } else if (escolha.equals("12")) {
