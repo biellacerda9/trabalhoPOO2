@@ -123,7 +123,7 @@ public class Menu {
             String escolha = scanner.nextLine();
 
             if (escolha.equals("1")) {
-                System.out.println("Entrou no 1.");
+                editarInvestidor(investidor);
             } else if (escolha.equals("2")) {
                 excluirInvestidor(investidor);
                 return;

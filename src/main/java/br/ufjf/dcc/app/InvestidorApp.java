@@ -437,7 +437,7 @@ public class InvestidorApp {
                     System.err.println("Erro: Investidor não encontrado.");
                 }
 
-                return; // 👈 encerra o método após responder "S"
+                return; //encerra o método após responder "S"
             }
 
             if (escolha.equalsIgnoreCase("N")) {
@@ -506,6 +506,158 @@ public class InvestidorApp {
 
         } catch (IOException e) {
             System.err.println("Erro ao salvar o relatório: " + e.getMessage());
+        }
+    }
+
+    public static void editarInvestidor(Investidor investidor) {
+        Scanner scanner = new Scanner(System.in);
+        String escolha = "";
+        while (true) {
+            System.out.println("--- EDITAR " + investidor.getNome().toUpperCase() + " ---");
+            System.out.println("1-Nome, 2-Telefone, 3-Data de Nascimento, 4-Endereço, 5-Patrimônio, 6-Voltar");
+            System.out.println("Escolha o campo para alterar:");
+            escolha = scanner.nextLine();
+
+            if (escolha.equals("1")) {
+                String novoNome = "";
+                while (true) {
+                    System.out.print("Novo Nome: ");
+                    novoNome = scanner.nextLine();
+                    if (novoNome.matches(".*\\d.*")) System.out.println("ERRO: O nome não pode conter números.");
+                    else if (novoNome.trim().isEmpty()) System.out.println("ERRO: O nome não pode estar vazio.");
+                    else {
+                        investidor.setNome(novoNome);
+                        System.out.println("Nome atualizado!");
+                        break;
+                    }
+                }
+            } else if (escolha.equals("2")) {
+                while (true) {
+                    System.out.print("Novo Telefone: ");
+                    String tel = scanner.nextLine().replaceAll("\\D", "");
+                    if (tel.length() == 11 || tel.length() == 10) {
+                        investidor.setTelefone(tel);
+                        System.out.println("Telefone atualizado!");
+                        break;
+                    }
+                    System.out.println("ERRO: Formato inválido.");
+                }
+            } else if (escolha.equals("3")) {
+                System.out.println("Nova Data de Nascimento: ");
+                int dia, mes, ano;
+                while (true) {
+                    try {
+                        System.out.println("Dia: ");
+                        dia = Integer.parseInt(scanner.nextLine());
+                        if (dia >= 1 && dia <= 31) break;
+                        System.out.println("ERRO: Dia inválido.");
+                    }catch (Exception e){
+                        System.out.println("ERRO: Digite apenas números.");
+                    }
+                }
+
+                while (true) {
+                    try {
+                        System.out.println("Mês: ");
+                        mes = Integer.parseInt(scanner.nextLine());
+                        if (mes >= 1 && mes <= 12) break;
+                        System.out.println("ERRO: Mês inválido.");
+                    }catch (Exception e){
+                        System.out.println("ERRO: Digite apenas números.");
+                    }
+                }
+
+                while (true) {
+                    try {
+                        System.out.println("Ano: ");
+                        ano = Integer.parseInt(scanner.nextLine());
+                        if (ano > 1900 && ano <= 2026) break;
+                        System.out.println("ERRO: Ano inválido.");
+                    }catch (Exception e){
+                        System.out.println("ERRO: Digite apenas números.");
+                    }
+                }
+
+                String novaData = String.format("%02d/%02d/%04d", dia, mes, ano);
+                investidor.setDataNascimento(novaData);
+                System.out.println("Data de nascimento atualizada!");
+
+            } else if (escolha.equals("4")) {
+                System.out.println("Novo endereço: ");
+                String cep = "";
+                while (true) {
+                    try {
+                        System.out.println("CEP: ");
+                        cep = scanner.nextLine();
+                        String cepLimpo = cep.replaceAll("\\D", "");
+                        cep = cepLimpo;
+                        if (cepLimpo.length() == 8) break;
+                        System.out.println("ERRO: CEP com números em excesso ou faltando.");
+                    }catch (Exception e) {
+                        System.out.println("ERRO: Digite uma opção válida.");
+                    }
+                }
+
+                String estado = "";
+                while (true) {
+                    System.out.println("Estado: ");
+                    estado = scanner.nextLine();
+
+                    if (estado.matches(".*\\d.*")) System.out.println("ERRO: O nome do estado não pode conter números.");
+                    else if (estado.trim().isEmpty()) System.out.println("ERRO: O nome do estado não pode estar vazio.");
+                    else break;
+                }
+
+                String cidade = "";
+                while (true) {
+                    System.out.println("Cidade: ");
+                    cidade = scanner.nextLine();
+                    if (cidade.matches(".*\\d.*")) System.out.println("ERRO: O nome do cidade não pode conter números.");
+                    else if (cidade.trim().isEmpty()) System.out.println("ERRO: O nome do cidade não pode estar vazio.");
+                    else break;
+                }
+
+                System.out.println("Bairro: ");
+                String bairro = scanner.nextLine();
+
+                System.out.println("Rua: ");
+                String rua = scanner.nextLine();
+
+                System.out.println("Número: ");
+                int numero;
+                while(true) {
+                    if(scanner.hasNextInt()) {
+                        numero = scanner.nextInt();
+                        scanner.nextLine();
+                        break;
+                    } else {
+                        System.out.println("Valor inválido. Digite novamente!");
+                        scanner.next();
+                    }
+                }
+                Endereco novoEndereco = new Endereco(rua, numero, bairro, cidade, estado, cep);
+                investidor.setEndereco(novoEndereco);
+                System.out.println("Endereço atualizado!");
+
+            } else if (escolha.equals("5")) {
+                while (true) {
+                    try {
+                        System.out.print("Novo Patrimônio TOTAL: ");
+                        double patri = Double.parseDouble(scanner.nextLine().replace(",", "."));
+                        if (patri >= 0) {
+                            investidor.setPatrimonio(patri);
+                            System.out.println("Patrimônio atualizado!");
+                            break;
+                        }
+                        System.out.println("ERRO: O patrimônio não pode ser negativo.");
+                    } catch (Exception e) {
+                        System.out.println("ERRO: Digite um valor válido.");
+                    }
+                }
+            } else if (escolha.equals("6")) {
+                System.out.println("Saindo da edição...");
+                break;
+            } else System.out.println("Opção inválida!");
         }
     }
 }
