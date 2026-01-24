@@ -4,13 +4,14 @@ import br.ufjf.dcc.io.CSVReader;
 import br.ufjf.dcc.io.Utils;
 import br.ufjf.dcc.model.*;
 import br.ufjf.dcc.model.ativos.*;
-
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
-
-import static br.ufjf.dcc.data.BancoAtivos.bancoAtivos;
 import static br.ufjf.dcc.data.BancoInvestidor.bancoInvestidor;
 
 public class InvestidorApp {
@@ -355,7 +356,7 @@ public class InvestidorApp {
     }
 
 
-    public static void excluirInvestidor () {
+    public static void excluirInvestidores () {
         Scanner scanner = new Scanner(System.in);
         imprimirResumo();
 
@@ -417,5 +418,94 @@ public class InvestidorApp {
             System.out.println(a.getNome() + " | CPF: " + a.getIdentificador());
         }
         System.out.println("------------------------------------------");
+    }
+
+    // Funções para o terceiro menu (Menu do Investidor)
+    public static void excluirInvestidor(Investidor investidor) {
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.print("Tem certeza que deseja excluir esse investidor? (S/N): ");
+            String escolha = scanner.nextLine().trim();
+
+            if (escolha.equalsIgnoreCase("S")) {
+
+                if (bancoInvestidor.containsKey(investidor.getIdentificador())) {
+                    bancoInvestidor.remove(investidor.getIdentificador());
+                    System.out.println("Sucesso: Investidor e sua carteira foram removidos.");
+                } else {
+                    System.err.println("Erro: Investidor não encontrado.");
+                }
+
+                return; // 👈 encerra o método após responder "S"
+            }
+
+            if (escolha.equalsIgnoreCase("N")) {
+                System.out.println("Operação cancelada.");
+                return;
+            }
+
+            System.err.println("Entrada inválida. Digite apenas S ou N.");
+        }
+    }
+
+
+    public static void salvarRelatorio(Investidor investidor) {
+        Carteira carteira = investidor.getCarteira();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String data = LocalDateTime.now().format(formatter);
+
+        String nomeArquivo = "relatorios/relatorio_" + investidor.getIdentificador() + "_" + data + ".json";
+
+        try (FileWriter writer = new FileWriter(nomeArquivo)) {
+
+            writer.write("{\n");
+
+            // --- Investidor ---
+            writer.write("  \"investidor\": {\n");
+            writer.write("    \"nome\": \"" + investidor.getNome() + "\",\n");
+            writer.write("    \"identificador\": \"" + investidor.getIdentificador() + "\",\n");
+            writer.write("    \"telefone\": \"" + investidor.getTelefone() + "\",\n");
+            writer.write("    \"dataNascimento\": \"" + investidor.getDataNascimento() + "\",\n");
+            writer.write("    \"patrimonio\": " + investidor.getPatrimonio() + "\n");
+            writer.write("  },\n");
+
+            // --- Carteira ---
+            writer.write("  \"carteira\": {\n");
+            writer.write("    \"totalGasto\": " + carteira.getValorTotalGasto() + ",\n");
+            writer.write("    \"totalAtual\": " + carteira.getValorTotalAtual() + ",\n");
+            writer.write("    \"percentualRendaFixa\": " + carteira.getPercentualRendaFixa() + ",\n");
+            writer.write("    \"percentualRendaVariavel\": " + carteira.getPercentualRendaVariavel() + ",\n");
+            writer.write("    \"percentualNacional\": " + carteira.getPercentualNacional() + ",\n");
+            writer.write("    \"percentualInternacional\": " + carteira.getPercentualInteracional() + ",\n");
+
+            // --- Ativos ---
+            writer.write("    \"ativos\": [\n");
+
+            int contador = 0;
+            int tamanho = carteira.getItens().size();
+
+            for (ItemCarteira item : carteira.getItens().values()) {
+                writer.write("      {\n");
+                writer.write("        \"ticker\": \"" + item.getAtivo().getTicker() + "\",\n");
+                writer.write("        \"quantidade\": " + item.getQuantidade() + ",\n");
+                writer.write("        \"valorAtual\": " + item.getValorAtualEmReal() + "\n");
+                writer.write("      }");
+
+                contador++;
+                if (contador < tamanho) writer.write(",");
+                writer.write("\n");
+            }
+
+            writer.write("    ]\n");
+            writer.write("  }\n");
+            writer.write("}\n");
+
+            System.out.println("Relatório salvo com sucesso em: " + nomeArquivo);
+
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar o relatório: " + e.getMessage());
+        }
     }
 }

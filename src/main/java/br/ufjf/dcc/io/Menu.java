@@ -84,7 +84,7 @@ public class Menu {
             } else if (escolha.equals("3")) {
                 exibirInvestidores();
             } else if (escolha.equals("4")) {
-                excluirInvestidor();
+                excluirInvestidores();
             } else if (escolha.equals("5")) {
                 br.ufjf.dcc.model.Investidor investidor = selecionarInvestidor();
 
@@ -125,19 +125,34 @@ public class Menu {
             if (escolha.equals("1")) {
                 System.out.println("Entrou no 1.");
             } else if (escolha.equals("2")) {
-                System.out.println("Entrou no 2.");
+                excluirInvestidor(investidor);
+                return;
             } else if (escolha.equals("3")) {
-                System.out.println("Entrou no 3.");
+                investidor.getCarteira().exibirAtivos();
             } else if (escolha.equals("4")) {
-                System.out.println("Entrou no 4.");
+                double totalGasto = investidor.getCarteira().getValorTotalGasto();
+                System.out.printf("Total gasto: R$ %.2f%n", totalGasto);
             } else if (escolha.equals("5")) {
-                System.out.println("Entrou no 5.");
+                double totalAtual = investidor.getCarteira().getValorTotalAtual();
+                System.out.printf("Valor atual da carteira: R$ %.2f%n", totalAtual);
             } else if (escolha.equals("6")) {
-                System.out.println("Entrou no 6.");
+                br.ufjf.dcc.model.Carteira carteira = investidor.getCarteira();
+
+                double rf = carteira.getPercentualRendaFixa();
+                double rv = carteira.getPercentualRendaVariavel();
+
+                System.out.printf("Renda Fixa: %.2f%%%n", rf);
+                System.out.printf("Renda Variável: %.2f%%%n", rv);
             } else if (escolha.equals("7")) {
-                System.out.println("Entrou no 7.");
+                br.ufjf.dcc.model.Carteira carteira = investidor.getCarteira();
+
+                double nacional = carteira.getPercentualNacional();
+                double internacional = carteira.getPercentualInteracional();
+
+                System.out.printf("Produtos Nacionais: %.2f%%%n", nacional);
+                System.out.printf("Produtos Internacionais: %.2f%%%n", internacional);
             } else if (escolha.equals("8")) {
-                System.out.println("Entrou no 8.");
+                salvarRelatorio(investidor);
             } else if (escolha.equals("9")) {
                 System.out.println("Entrou no 9.");
             } else if (escolha.equals("10")) {

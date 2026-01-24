@@ -16,6 +16,25 @@ public class Carteira {
         }
     }
 
+
+    public Map<String, ItemCarteira> getItens() {
+        return itens;
+    }
+
+
+    public void exibirAtivos() {
+        if (itens.isEmpty()) {
+            System.out.println("Carteira vazia.");
+            return;
+        }
+
+        System.out.println("Ativos na carteira:");
+        for (ItemCarteira item : itens.values()) {
+            System.out.println(item);
+        }
+    }
+
+
     public void adicionarAtivos(Ativo ativo, double quantidade, double precoMedio){
 
         if(this.itens.containsKey(ativo.getTicker())){
@@ -75,7 +94,7 @@ public class Carteira {
         double valorTotalFixo = 0;
         for (ItemCarteira a: itens.values()){
             if(a.getAtivo().getTipoRenda().equals("Fixa")){
-                valorTotalFixo += a.getAtivo().getPrecoAtual();
+                valorTotalFixo += a.getValorAtualEmReal();
             }
         }
 
@@ -89,7 +108,7 @@ public class Carteira {
         double valorTotalVariavel = 0;
         for (ItemCarteira a: itens.values()){
             if(a.getAtivo().getTipoRenda().equals("Variável")){
-                valorTotalVariavel += a.getAtivo().getPrecoAtual();
+                valorTotalVariavel += a.getValorAtualEmReal();
             }
         }
 
@@ -103,7 +122,7 @@ public class Carteira {
         double totalProdutosNacionais = 0;
         for (ItemCarteira a: itens.values()){
             if(a.getAtivo().ehNacional()){
-                totalProdutosNacionais += a.getAtivo().getPrecoAtual();
+                totalProdutosNacionais += a.getValorAtualEmReal();
             }
         }
 
@@ -117,7 +136,7 @@ public class Carteira {
         double totalProdutosInternacionais = 0;
         for (ItemCarteira a: itens.values()){
             if(!a.getAtivo().ehNacional()){
-                totalProdutosInternacionais += a.getAtivo().getPrecoAtual();
+                totalProdutosInternacionais += a.getValorAtualEmReal();
             }
         }
 
