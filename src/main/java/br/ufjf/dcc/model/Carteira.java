@@ -60,7 +60,13 @@ public class Carteira {
             return false;
         } else {
             item.subtrairQuantidade(quantidade);
-            println( quantidade + " itens removidos com sucesso!");
+
+            if (item.getQuantidade() == 0) {
+                this.itens.remove(ticker);
+                println("Ativo removido da carteira.");
+            } else {
+                println(quantidade + " itens removidos com sucesso!");
+            }
         }
         return true;
     }

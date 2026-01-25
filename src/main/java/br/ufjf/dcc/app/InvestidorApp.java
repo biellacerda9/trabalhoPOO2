@@ -690,7 +690,6 @@ public class InvestidorApp {
 
     public static void movimentarVenda (Investidor investidor) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("\nSaldo atual: " + investidor.getPatrimonio());
 
         investidor.getCarteira().exibirAtivos();
 
@@ -699,15 +698,29 @@ public class InvestidorApp {
             return;
         }
 
+        Carteira carteira = investidor.getCarteira();
+        String ticker;
 
-        System.out.println("\nDigite o TICKER (ID) do ativo que deseja vender: ");
-        String ticker = scanner.nextLine().toUpperCase().trim();
+        // ===== LOOP PARA ESCOLHER ATIVO =====
+        while (true) {
+            System.out.println("\nDigite o TICKER (ID) do ativo que deseja vender (ou 'S' para sair):");
+            ticker = scanner.nextLine().toUpperCase().trim();
 
-        if (!bancoAtivos.containsKey(ticker)) {
-            System.out.println("ERRO: Esse ticker não foi encontrado no sistema.");
+            if (ticker.equals("S")) {
+                System.out.println("Operação de venda cancelada.");
+                return;
+            }
+            if (!bancoAtivos.containsKey(ticker)) {
+                System.out.println("ERRO: Esse ticker não foi encontrado no sistema.");
+                continue;
+            }
+            if (!carteira.getItens().containsKey(ticker)) {
+                System.out.println("ERRO: Você não possui esse ativo na carteira.");
+                continue;
+            }
+            break; // ticker válido
         }
 
-        Carteira carteira = investidor.getCarteira();
         ItemCarteira item = carteira.getItens().get(ticker);
         Ativo ativo = item.getAtivo();
 
@@ -717,38 +730,50 @@ public class InvestidorApp {
 
         String desejo = "";
         double quantidadeVender = 0;
+
         while (true) {
             System.out.println("Escolha uma opção: ");
-            System.out.print("1.Vender tudo, 2.Vender quantidade personalizada");
+            System.out.print("1.Vender tudo, 2.Vender quantidade personalizada ");
             desejo = scanner.nextLine();
 
             if (desejo.equals("1")) {
                 quantidadeVender = quantidadeDisponivel;
-            } else if  (desejo.equals("2")) {
+                break;
+            }
+            else if (desejo.equals("2")) {
                 System.out.println("Quanto deseja vender: ");
 
                 try {
-                    quantidadeVender = scanner.nextDouble();
+                    quantidadeVender = Utils.parseDoubleGeral(scanner.nextLine());
 
                     if (quantidadeVender > quantidadeDisponivel) {
                         System.out.println("ERRO: Você possui apenas " + quantidadeDisponivel + " unidades.");
-                        break;
+                        continue;
                     }
                     if (quantidadeVender <= 0) {
                         System.out.println("ERRO: A quantidade desejada deve ser maior que 0.");
-                        break;
+                        continue;
                     }
-                }catch (Exception e) {
+                    break;
+                } catch (Exception e) {
                     System.out.println("ERRO: Entrada inválida!");
                 }
-            } else System.out.println("ERRO: Opção inválida! Tente novamente!");
+            }
+            else {
+                System.out.println("ERRO: Opção inválida! Tente novamente!");
+            }
         }
 
         System.out.println("Instituição responsável pela movimentação:");
         String instituicao = scanner.nextLine();
 
-        String resultado = investidor.cadastrarInvestimento(ativo, quantidadeVender, ativo.getPrecoAtual(), "VENDA",  instituicao);
+        String resultado = investidor.cadastrarInvestimento(
+                ativo,
+                quantidadeVender,
+                ativo.getPrecoAtual(),
+                "VENDA",
+                instituicao
+        );
         System.out.println("\nResultado: " + resultado);
-
     }
 }
