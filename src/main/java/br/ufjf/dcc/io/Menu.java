@@ -160,7 +160,7 @@ public class Menu {
             } else if (escolha.equals("10")) {
                 movimentarVenda(investidor);
             } else if (escolha.equals("11")) {
-                System.out.println("Entrou no 11.");
+                cadastrarMovimentacaoEmLote(investidor);
             } else if (escolha.equals("12")) {
                 break;
             } else {

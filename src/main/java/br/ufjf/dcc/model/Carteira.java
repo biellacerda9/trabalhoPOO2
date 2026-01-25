@@ -64,8 +64,6 @@ public class Carteira {
             if (item.getQuantidade() == 0) {
                 this.itens.remove(ticker);
                 println("Ativo removido da carteira.");
-            } else {
-                println(quantidade + " itens removidos com sucesso!");
             }
         }
         return true;

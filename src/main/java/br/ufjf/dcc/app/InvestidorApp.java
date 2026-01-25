@@ -776,4 +776,63 @@ public class InvestidorApp {
         );
         System.out.println("\nResultado: " + resultado);
     }
+
+
+    public static void cadastrarMovimentacaoEmLote(Investidor investidor) {
+        Scanner scanner = new Scanner(System.in);
+
+        String caminho;
+        while (true) {
+            try {
+                System.out.println("Digite o caminho do arquivo (ex: movimentacoes.csv): ");
+                caminho = scanner.nextLine();
+
+                File file = new File(caminho);
+                if (!file.exists() || !file.isFile()) {
+                    System.out.println("ERRO: Arquivo não encontrado.");
+                    continue;
+                }
+                if (!caminho.endsWith(".csv")) {
+                    System.out.println("ERRO: O arquivo precisa ser .csv.");
+                    continue;
+                }
+                break;
+            } catch (Exception e) {
+                System.out.println("ERRO: Caminho inválido.");
+            }
+        }
+        List<String[]> linhas = CSVReader.lerCSV(caminho);
+
+        for (String[] col : linhas) {
+            try {
+                String tipo = col[0].trim().toUpperCase(); // COMPRA ou VENDA
+                String ticker = col[1].trim().toUpperCase();
+                double quantidade = Utils.parseDoubleGeral(col[2]);
+                double preco = Utils.parseDoubleGeral(col[3]);
+                String instituicao = col[4].trim();
+
+                if (!bancoAtivos.containsKey(ticker)) {
+                    System.out.println("ERRO: Ativo " + ticker + " não existe. Linha ignorada.");
+                    continue;
+                }
+                if (quantidade <= 0 || preco <= 0) {
+                    System.out.println("ERRO: Quantidade ou preço inválido para " + ticker + ". Linha ignorada.");
+                    continue;
+                }
+                Ativo ativo = bancoAtivos.get(ticker);
+
+                String resultado = investidor.cadastrarInvestimento(
+                        ativo,
+                        quantidade,
+                        preco,
+                        tipo,
+                        instituicao
+                );
+                System.out.println("[" + tipo + "] " + ticker + " → " + resultado);
+            } catch (Exception e) {
+                System.out.println("ERRO: Linha inválida no arquivo. Linha ignorada.");
+            }
+        }
+        System.out.println("\nLote de movimentações processado com sucesso!\n");
+    }
 }
