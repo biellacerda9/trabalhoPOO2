@@ -79,4 +79,13 @@ public class ItemCarteira {
     public void subtrairQuantidade (double qtd) {
         this.quantidade -= qtd;
     }
+
+
+    @Override
+    public String toString() {
+        return "Ativo: " + ativo.getTicker() +
+                " | Quantidade: " + quantidade +
+                " | Preço médio: R$ " + precoMedioCompra +
+                " | Valor atual: R$ " + getValorAtualEmReal();
+    }
 }
