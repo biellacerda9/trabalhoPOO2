@@ -74,154 +74,180 @@ public class AtivoApp {
         while (true) {
             System.out.println("Escolha o tipo de ativo: 1. Ação, 2. FII, 3. Stock, 4. Cripto, 5. Tesouro, V. Voltar");
             escolha = scanner.nextLine();
+
             if (escolha.equalsIgnoreCase("V")) {
                 System.out.println("Voltando...");
                 return;
             }
-
             if (escolha.equals("1") || escolha.equals("2") || escolha.equals("3") ||
                     escolha.equals("4") || escolha.equals("5")) {
                 break;
             } else {
-                System.out.println("Opção INVÁLIDA! Por favor, escolha um número de 1 a 5 ou V para voltar.");
+                System.out.println("Opção INVÁLIDA!");
             }
         }
-
-        String ticker = "";
+        String ticker;
         while (true) {
-                System.out.println("Ticker: ");
-                ticker = scanner.nextLine().trim().toUpperCase();
-                if (!ticker.isEmpty() && !ticker.equals("")) break;
-                System.out.println("ERRO: O identificador não pode ser nulo.");
-        }
+            System.out.println("Ticker (ou 'V' para voltar): ");
+            ticker = scanner.nextLine().trim().toUpperCase();
 
-        System.out.println("Nome: ");
+            if (ticker.equalsIgnoreCase("V")) {
+                System.out.println("Voltando...");
+                return;
+            }
+            if (!ticker.isEmpty()) break;
+            System.out.println("ERRO: O identificador não pode ser vazio.");
+        }
+        System.out.println("Nome (ou 'V' para voltar): ");
         String nome = scanner.nextLine();
+        if (nome.equalsIgnoreCase("V")) return;
 
-        double preco = 0;
+        double preco;
         while (true) {
-            System.out.println("Preço: ");
-            String entradaPreco = scanner.nextLine().replace(",", ".");
+            System.out.println("Preço (ou 'V' para voltar): ");
+            String entradaPreco = scanner.nextLine();
 
+            if (entradaPreco.equalsIgnoreCase("V")) {
+                System.out.println("Voltando...");
+                return;
+            }
             try {
-                preco = Double.parseDouble(entradaPreco);
-
+                preco = Double.parseDouble(entradaPreco.replace(",", "."));
                 if (preco > 0) break;
-                else System.out.println("ERRO! O preço deve ser maior que ZERO.");
+                System.out.println("ERRO: O preço deve ser maior que zero.");
             } catch (NumberFormatException e) {
-                System.out.println("ERRO: O valor não pode conter letras.");
-                System.out.println("Use apenas números e ponto ou vírgula para decimais.");
+                System.out.println("ERRO: Valor inválido.");
             }
         }
-
-        boolean qualificado = false;
+        boolean qualificado;
         while (true) {
-            System.out.println("Qualificado? (S/N)");
+            System.out.println("Qualificado? (S/N ou V para voltar)");
             String entrada = scanner.nextLine().trim().toUpperCase();
 
+            if (entrada.equals("V")) {
+                System.out.println("Voltando...");
+                return;
+            }
             if (entrada.equals("S")) {
                 qualificado = true;
                 break;
             } else if (entrada.equals("N")) {
                 qualificado = false;
                 break;
-            } else System.out.println("ERRO: Entrada inválida! Digite apenas 'S' para SIM ou 'N' para NÃO.");
-        }
-
-        if (ticker == null || ticker.isEmpty() || preco <= 0) {
-            System.out.println("Erro ao cadastrar ativo. Tente novamente.");
-            return;
-        }
-
-        br.ufjf.dcc.model.ativos.Ativo novoAtivo = null;
-
-            if (escolha.equals("1")) {
-                novoAtivo = new Acao(nome, ticker, preco, qualificado);
-            } else if (escolha.equals("2")) {
-                System.out.println("Segmento: ");
-                String segmento = scanner.nextLine();
-
-                double valorDividendo = 0;
-                while (true) {
-                    try {
-                        System.out.println("Valor do último dividendo: ");
-                        valorDividendo = Double.parseDouble(scanner.nextLine().replace(",", "."));
-                        if (valorDividendo >= 0) break;
-                        System.out.println("ERRO: O dividendo não pode ser negativo.");
-                    } catch (NumberFormatException e) {
-                        System.out.println("ERRO: Digite um valor numérico válido!");
-                    }
-                }
-
-                double taxaAdm = 0;
-                while(true) {
-                    try {
-                        System.out.println("Taxa de administração: ");
-                        taxaAdm = Double.parseDouble(scanner.nextLine().replace(",", "."));
-                        if (taxaAdm >= 0) break;
-                        System.out.println("ERRO: A taxa de administração não pode ser negativa.");
-                    }catch (NumberFormatException e) {
-                        System.out.println("Erro: Digite um valor numérico válido!");
-                    }
-                }
-                novoAtivo = new FII(nome, ticker, preco, qualificado, segmento, valorDividendo, taxaAdm);
-            } else if (escolha.equals("3")) {
-                System.out.println("Bolsa de Negociação: ");
-                String bolsa = scanner.nextLine();
-                System.out.println("Setor da empresa: ");
-                String setor = scanner.nextLine();
-
-                double fator = 0;
-                while (true) {
-                    try {
-                        System.out.println("Fator de conversão: ");
-                        fator = Double.parseDouble(scanner.nextLine().replace(",", "."));
-                        if (fator >= 0) break;
-                        System.out.println("ERRO: O fator de conversão não pode ser negativo.");
-                    }catch (NumberFormatException e) {
-                        System.out.println("Erro: Digite um valor numérico válido!");
-                    }
-                }
-                novoAtivo = new Stock(nome, ticker, preco, qualificado, bolsa, setor, fator);
-            } else if (escolha.equals("4")) {
-                System.out.println("Algoritmo de consenso: ");
-                String algoritmo = scanner.nextLine();
-
-                double quantidade = 0;
-                while (true) {
-                    try {
-                        System.out.println("Quantidade máxima de circulação: ");
-                        quantidade = Double.parseDouble(scanner.nextLine().replace(",", "."));
-                        if (quantidade >=0) break;
-                        System.out.println("ERRO: A quantidade não pode ser negativa.");
-                    }catch (NumberFormatException e) {
-                        System.out.println("Erro: Digite um valor numérico válido!");
-                    }
-                }
-                double fator = 0;
-                while (true) {
-                    try {
-                        System.out.println("Fator de conversão: ");
-                        fator = Double.parseDouble(scanner.nextLine().replace(",", "."));
-                        if (fator >= 0) break;
-                        System.out.println("ERRO: O fator de conversão não pode ser negativo.");
-                    }catch (NumberFormatException e) {
-                        System.out.println("Erro: Digite um valor numérico válido!");
-                    }
-                }
-                novoAtivo = new Criptomoeda(nome, ticker, preco, qualificado, algoritmo, quantidade, fator);
-            } else if (escolha.equals("5")) {
-                System.out.println("Tipo de rendimento: ");
-                String tipo = scanner.nextLine();
-                System.out.println("Data de vencimento: ");
-                String dataVencimento = scanner.nextLine();
-                novoAtivo = new Tesouro(nome, ticker, preco, qualificado, tipo, dataVencimento);
             } else {
-                System.out.println("Tipo de ativo inválido.");
-                return;
+                System.out.println("ERRO: Digite S, N ou V.");
             }
+        }
+        Ativo novoAtivo = null;
 
-        // Salva no banco de dados
+        if (escolha.equals("1")) {
+            novoAtivo = new Acao(nome, ticker, preco, qualificado);
+        } else if (escolha.equals("2")) {
+            System.out.println("Segmento (ou 'V' para voltar): ");
+            String segmento = scanner.nextLine();
+            if (segmento.equalsIgnoreCase("V")) return;
+
+            double valorDividendo;
+            while (true) {
+                System.out.println("Valor do último dividendo (ou 'V' para voltar): ");
+                String entrada = scanner.nextLine();
+                if (entrada.equalsIgnoreCase("V")) return;
+
+                try {
+                    valorDividendo = Double.parseDouble(entrada.replace(",", "."));
+                    if (valorDividendo >= 0) break;
+                    System.out.println("ERRO: Valor inválido.");
+                } catch (NumberFormatException e) {
+                    System.out.println("ERRO: Digite um número válido.");
+                }
+            }
+            double taxaAdm;
+            while (true) {
+                System.out.println("Taxa de administração (ou 'V' para voltar): ");
+                String entrada = scanner.nextLine();
+                if (entrada.equalsIgnoreCase("V")) return;
+
+                try {
+                    taxaAdm = Double.parseDouble(entrada.replace(",", "."));
+                    if (taxaAdm >= 0) break;
+                    System.out.println("ERRO: Valor inválido.");
+                } catch (NumberFormatException e) {
+                    System.out.println("ERRO: Digite um número válido.");
+                }
+            }
+            novoAtivo = new FII(nome, ticker, preco, qualificado, segmento, valorDividendo, taxaAdm);
+
+        } else if (escolha.equals("3")) {
+            System.out.println("Bolsa de negociação (ou 'V' para voltar): ");
+            String bolsa = scanner.nextLine();
+            if (bolsa.equalsIgnoreCase("V")) return;
+
+            System.out.println("Setor da empresa (ou 'V' para voltar): ");
+            String setor = scanner.nextLine();
+            if (setor.equalsIgnoreCase("V")) return;
+
+            double fator;
+            while (true) {
+                System.out.println("Fator de conversão (ou 'V' para voltar): ");
+                String entrada = scanner.nextLine();
+                if (entrada.equalsIgnoreCase("V")) return;
+
+                try {
+                    fator = Double.parseDouble(entrada.replace(",", "."));
+                    if (fator >= 0) break;
+                    System.out.println("ERRO: Valor inválido.");
+                } catch (NumberFormatException e) {
+                    System.out.println("ERRO: Digite um número válido.");
+                }
+            }
+            novoAtivo = new Stock(nome, ticker, preco, qualificado, bolsa, setor, fator);
+
+        } else if (escolha.equals("4")) {
+            System.out.println("Algoritmo de consenso (ou 'V' para voltar): ");
+            String algoritmo = scanner.nextLine();
+            if (algoritmo.equalsIgnoreCase("V")) return;
+
+            double quantidade;
+            while (true) {
+                System.out.println("Quantidade máxima de circulação (ou 'V' para voltar): ");
+                String entrada = scanner.nextLine();
+                if (entrada.equalsIgnoreCase("V")) return;
+
+                try {
+                    quantidade = Double.parseDouble(entrada.replace(",", "."));
+                    if (quantidade >= 0) break;
+                    System.out.println("ERRO: Valor inválido.");
+                } catch (NumberFormatException e) {
+                    System.out.println("ERRO: Digite um número válido.");
+                }
+            }
+            double fator;
+            while (true) {
+                System.out.println("Fator de conversão (ou 'V' para voltar): ");
+                String entrada = scanner.nextLine();
+                if (entrada.equalsIgnoreCase("V")) return;
+
+                try {
+                    fator = Double.parseDouble(entrada.replace(",", "."));
+                    if (fator >= 0) break;
+                    System.out.println("ERRO: Valor inválido.");
+                } catch (NumberFormatException e) {
+                    System.out.println("ERRO: Digite um número válido.");
+                }
+            }
+            novoAtivo = new Criptomoeda(nome, ticker, preco, qualificado, algoritmo, quantidade, fator);
+
+        } else if (escolha.equals("5")) {
+            System.out.println("Tipo de rendimento (ou 'V' para voltar): ");
+            String tipo = scanner.nextLine();
+            if (tipo.equalsIgnoreCase("V")) return;
+
+            System.out.println("Data de vencimento (ou 'V' para voltar): ");
+            String dataVencimento = scanner.nextLine();
+            if (dataVencimento.equalsIgnoreCase("V")) return;
+
+            novoAtivo = new Tesouro(nome, ticker, preco, qualificado, tipo, dataVencimento);
+        }
         if (novoAtivo != null) {
             bancoAtivos.put(ticker, novoAtivo);
             System.out.println("Sucesso: Ativo " + ticker + " cadastrado!");
@@ -235,33 +261,43 @@ public class AtivoApp {
         String caminho = "";
         while (true) {
             try {
-                System.out.println("Digite o caminho do arquivo (ex: acoes.csv): ");
+                System.out.println("Digite o caminho do arquivo (ex: acoes.csv) ou 'V' para voltar: ");
                 caminho = scanner.nextLine();
 
+                if (caminho.equalsIgnoreCase("V")) {
+                    System.out.println("Voltando...\n");
+                    return;
+                }
                 File file = new File(caminho);
                 if (!file.exists() || !file.isFile()) {
                     System.out.println("ERRO: Arquivo não encontrado.");
                     continue;
                 }
-
                 if (caminho.endsWith(".csv")) break;
                 System.out.println("ERRO: O caminho do arquivo precisa terminar com '.csv'.");
-            }catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 System.out.println("ERRO: Digite um caminho válido para o arquivo.");
             }
         }
+        String tipoDoArquivo;
+        while (true) {
+            System.out.println("Digite o tipo de ativos presente neste arquivo (ou 'V' para voltar): ");
+            System.out.println("1-Ação, 2-FII, 3-Stock, 4-Cripto, 5-Tesouro");
+            tipoDoArquivo = scanner.nextLine();
 
-        System.out.println("Digite o tipo de ativos presente neste arquivo: ");
-        System.out.println("1-Ação, 2-FII, 3-Stock, 4-Cripto, 5-Tesouro");
-        String tipoDoArquivo = scanner.nextLine();
-
+            if (tipoDoArquivo.equalsIgnoreCase("V")) {
+                System.out.println("Voltando...\n");
+                return;
+            }
+            if (tipoDoArquivo.matches("[1-5]")) break;
+            System.out.println("ERRO: Opção inválida.");
+        }
         List<String[]> linhas = CSVReader.lerCSV(caminho);
 
         if (linhas.isEmpty()) {
             System.out.println("ERRO: O arquivo está vazio.");
             return;
         }
-
         String[] primeiraLinha = linhas.get(0);
         boolean valido = false;
 
@@ -275,23 +311,45 @@ public class AtivoApp {
             System.out.println("ERRO: O tipo de ativo selecionado não corresponde com o tipo presente no arquivo.");
             return;
         }
+        for (String[] col : linhas) {
+            try {
+                Ativo novoAtivo = null;
 
-        for  (String[] col : linhas) {
-            br.ufjf.dcc.model.ativos.Ativo novoAtivo = null;
-            if (tipoDoArquivo.equals("1")){
-                novoAtivo = new Acao(col[0], col [1], Double.parseDouble(col[2]), Boolean.parseBoolean(col[3]));
-            } else if (tipoDoArquivo.equals("2")) {
-                novoAtivo = new FII(col[0], col [1], Double.parseDouble(col[2]), Boolean.parseBoolean(col[3]), col[4], Double.parseDouble(col[5]), Double.parseDouble(col[6]));
-            } else if (tipoDoArquivo.equals("3")) {
-                novoAtivo = new Stock(col[0], col [1], Double.parseDouble(col[2]), Boolean.parseBoolean(col[3]),  col[4], col[5], Double.parseDouble(col[6]));
-            } else if (tipoDoArquivo.equals("4")) {
-                novoAtivo = new Criptomoeda(col[0], col [1], Double.parseDouble(col[2]), Boolean.parseBoolean(col[3]), col[4], Double.parseDouble(col[5]), Double.parseDouble(col[6]));
-            } else if (tipoDoArquivo.equals("5")) {
-                novoAtivo = new Tesouro(col[0], col [1], Double.parseDouble(col[2]), Boolean.parseBoolean(col[3]), col[4], col[5]);
-            }
-
-            if (novoAtivo != null) {
-                bancoAtivos.put(novoAtivo.getTicker().toUpperCase() , novoAtivo);
+                if (tipoDoArquivo.equals("1")) {
+                    novoAtivo = new Acao(col[0], col[1],
+                            Double.parseDouble(col[2]),
+                            Boolean.parseBoolean(col[3]));
+                } else if (tipoDoArquivo.equals("2")) {
+                    novoAtivo = new FII(col[0], col[1],
+                            Double.parseDouble(col[2]),
+                            Boolean.parseBoolean(col[3]),
+                            col[4],
+                            Double.parseDouble(col[5]),
+                            Double.parseDouble(col[6]));
+                } else if (tipoDoArquivo.equals("3")) {
+                    novoAtivo = new Stock(col[0], col[1],
+                            Double.parseDouble(col[2]),
+                            Boolean.parseBoolean(col[3]),
+                            col[4], col[5],
+                            Double.parseDouble(col[6]));
+                } else if (tipoDoArquivo.equals("4")) {
+                    novoAtivo = new Criptomoeda(col[0], col[1],
+                            Double.parseDouble(col[2]),
+                            Boolean.parseBoolean(col[3]),
+                            col[4],
+                            Double.parseDouble(col[5]),
+                            Double.parseDouble(col[6]));
+                } else if (tipoDoArquivo.equals("5")) {
+                    novoAtivo = new Tesouro(col[0], col[1],
+                            Double.parseDouble(col[2]),
+                            Boolean.parseBoolean(col[3]),
+                            col[4], col[5]);
+                }
+                if (novoAtivo != null) {
+                    bancoAtivos.put(novoAtivo.getTicker().toUpperCase(), novoAtivo);
+                }
+            } catch (Exception e) {
+                // ignora linha inválida e continua
             }
         }
         System.out.println("Cadastro em lote concluído com sucesso.");
@@ -361,17 +419,29 @@ public class AtivoApp {
 
     public static void editarAtivo () {
         Scanner scanner = new Scanner(System.in);
+        System.out.print("\n=== Exibindo todos os ativos com visualização interativa ===");
         exibirAtivosDoBanco();
-        System.out.println("Digite o ticker (ID) do ativo que deseja editar: ");
+
+        System.out.println("Digite o ticker (ID) do ativo que deseja editar ou 'S' para sair: ");
         String tickerEditar = scanner.nextLine().trim().toUpperCase();
 
+        if (tickerEditar.equals("S")) {
+            System.out.println("Voltando...\n");
+            return;
+        }
         br.ufjf.dcc.model.ativos.Ativo ativo = bancoAtivos.get(tickerEditar);
 
         if (ativo != null) {
             String escolha = "";
+
             while (!escolha.equalsIgnoreCase("S")) {
                 System.out.println("\n--- MODO DE EDIÇÃO ---");
-                System.out.println("DADOS: " + ativo.getNome() + " | " + ativo.getPrecoAtual() + " | "  + ativo.getTicker() + " | "  + ativo.isQualificado());
+                System.out.println(
+                        "DADOS: " + ativo.getNome() + " | " +
+                                ativo.getPrecoAtual() + " | " +
+                                ativo.getTicker() + " | " +
+                                ativo.isQualificado()
+                );
                 System.out.println("1. Nome, 2. Ticker, 3. Preço, 4. Qualificação");
 
                 String menuExtra = ativo.getMenuEspecifico();
@@ -381,16 +451,15 @@ public class AtivoApp {
                 System.out.println("S. Sair");
 
                 escolha = scanner.nextLine();
-
                 if (escolha.equals("1") || escolha.equals("2") || escolha.equals("3") || escolha.equals("4")) {
                     ativo.editarCamposComuns(escolha, scanner);
+
                 } else if (ativo.isOpcaoEspecificaValida(escolha)) {
                     ativo.editarCamposEspecificos(escolha, scanner);
 
-                } else if (!escolha.equals("s")) {
+                } else if (!escolha.equalsIgnoreCase("S")) {
                     System.out.println("Opção inválida!");
                 }
-
             }
         } else {
             System.out.println("Ativo não encontrado!");
@@ -400,30 +469,39 @@ public class AtivoApp {
 
     public static void excluirAtivo () {
         Scanner scanner = new Scanner(System.in);
-        exibirAtivosDoBanco();
-        System.out.println("Digite o ticker (ID) do ativo que deseja excluir: ");
-        String tickerExcluir =  scanner.nextLine().trim().toUpperCase();
 
+        System.out.print("\n=== Exibindo todos os ativos com visualização interativa ===");
+        exibirAtivosDoBanco();
+
+        System.out.println("Digite o ticker (ID) do ativo que deseja excluir ou 'S' para sair: ");
+        String tickerExcluir = scanner.nextLine().trim().toUpperCase();
+
+        if (tickerExcluir.equals("S")) {
+            System.out.println("Voltando...\n");
+            return;
+        }
         br.ufjf.dcc.model.ativos.Ativo ativo = bancoAtivos.get(tickerExcluir);
 
-        String escolha = "";
-        if (ativo != null) {
-            while (true) {
-                try {
-                    System.out.print("Tem certeza que deseja excluir " + ativo.getTicker() + " | " + ativo.getNome() + "? "  + "(S/N) ");
-                    escolha = scanner.nextLine().trim().toUpperCase();
-                    if (escolha.equals("S")) {
-                        bancoAtivos.remove(tickerExcluir);
-                        System.out.println("Excluido com sucesso!");
-                        return;
-                    } else if (escolha.equals("N")) {
-                        System.out.println("Exclusão cancelada. \nSaindo da exclusão...");
-                        return;
-                    }
-                    System.out.println("ERRO: Entrada inválida! Digite 'S' para sim e 'N' para não");
-                }catch (Exception e) {
-                    System.out.println("ERRO: Digite um valor válido.");
-                }
+        if (ativo == null) {
+            System.out.println("Ativo não encontrado!");
+            return;
+        }
+        while (true) {
+            System.out.print(
+                    "Tem certeza que deseja excluir " +
+                            ativo.getTicker() + " | " + ativo.getNome() + "? (S/N) "
+            );
+            String escolha = scanner.nextLine().trim().toUpperCase();
+
+            if (escolha.equals("S")) {
+                bancoAtivos.remove(tickerExcluir);
+                System.out.println("Excluído com sucesso!");
+                return;
+            } else if (escolha.equals("N")) {
+                System.out.println("Exclusão cancelada.\nVoltando...");
+                return;
+            } else {
+                System.out.println("ERRO: Entrada inválida! Digite 'S' para SIM ou 'N' para NÃO.");
             }
         }
     }
