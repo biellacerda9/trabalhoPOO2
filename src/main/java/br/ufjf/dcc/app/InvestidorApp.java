@@ -478,7 +478,7 @@ public class InvestidorApp {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String data = LocalDateTime.now().format(formatter);
 
-        String nomeArquivo = "relatorios/relatorio_" + investidor.getIdentificador() + "_" + data + ".json";
+        String nomeArquivo = "relatorio_" + investidor.getIdentificador() + "_" + data + ".json";
 
         try (FileWriter writer = new FileWriter(nomeArquivo)) {
 
@@ -687,34 +687,54 @@ public class InvestidorApp {
         Scanner scanner = new Scanner(System.in);
         System.out.println("\nSaldo atual: " + investidor.getPatrimonio());
 
-        String ticker = "";
+        String ticker;
         while (true) {
-            try {
-                System.out.println("\nDigite o TICKER (ID) do ativo que deseja comprar: ");
-                ticker = scanner.nextLine().toUpperCase().trim();
-                if (bancoAtivos.containsKey(ticker)) break;
-                System.out.println("ERRO: Esse ticker não foi encontrado no sistema.");
-            } catch (Exception e) {
-                System.out.println("ERRO: Digite um ticker válido.");
+            System.out.println("\nDigite o TICKER (ID) do ativo que deseja comprar ou 'V' para voltar: ");
+            ticker = scanner.nextLine().toUpperCase().trim();
+
+            if (ticker.equalsIgnoreCase("V")) {
+                System.out.println("Voltando...");
+                return;
             }
+            if (bancoAtivos.containsKey(ticker)) break;
+            System.out.println("ERRO: Esse ticker não foi encontrado no sistema.");
         }
-
-
         Ativo ativo = bancoAtivos.get(ticker);
-
         System.out.println("\nAtivo selecionado: " + ativo.getNome() + " | " + ativo.getPrecoAtual());
 
-        double quantidade = 0;
-        System.out.println("Digite a quantidade desejada: ");
-        quantidade = scanner.nextDouble();
-        scanner.nextLine();
-        System.out.println("Instituição responsável pela movimentação:");
+        double quantidade;
+        while (true) {
+            System.out.println("Digite a quantidade desejada ou 'V' para voltar: ");
+            String entrada = scanner.nextLine();
+
+            if (entrada.equalsIgnoreCase("V")) {
+                System.out.println("Voltando...");
+                return;
+            }
+            try {
+                quantidade = Double.parseDouble(entrada.replace(",", "."));
+                if (quantidade > 0) break;
+                System.out.println("ERRO: A quantidade deve ser maior que zero.");
+            } catch (NumberFormatException e) {
+                System.out.println("ERRO: Digite um valor numérico válido.");
+            }
+        }
+        System.out.println("Instituição responsável pela movimentação (ou 'V' para voltar):");
         String instituicao = scanner.nextLine();
-
-        String resultado = investidor.cadastrarInvestimento(ativo, quantidade, ativo.getPrecoAtual(), "COMPRA",  instituicao);
+        if (instituicao.equalsIgnoreCase("V")) {
+            System.out.println("Voltando...");
+            return;
+        }
+        String resultado = investidor.cadastrarInvestimento(
+                ativo,
+                quantidade,
+                ativo.getPrecoAtual(),
+                "COMPRA",
+                instituicao
+        );
         System.out.println("\nResultado: " + resultado);
-
     }
+
 
     public static void movimentarVenda (Investidor investidor) {
         Scanner scanner = new Scanner(System.in);
@@ -725,16 +745,15 @@ public class InvestidorApp {
             System.out.println("ERRO: Carteira não possui nenhum ativo!");
             return;
         }
-
         Carteira carteira = investidor.getCarteira();
         String ticker;
 
-        // ===== LOOP PARA ESCOLHER ATIVO =====
+        // ===== ESCOLHA DO ATIVO =====
         while (true) {
             System.out.println("\nDigite o TICKER (ID) do ativo que deseja vender (ou 'S' para sair):");
             ticker = scanner.nextLine().toUpperCase().trim();
 
-            if (ticker.equals("S")) {
+            if (ticker.equalsIgnoreCase("S")) {
                 System.out.println("Operação de venda cancelada.");
                 return;
             }
@@ -746,9 +765,8 @@ public class InvestidorApp {
                 System.out.println("ERRO: Você não possui esse ativo na carteira.");
                 continue;
             }
-            break; // ticker válido
+            break;
         }
-
         ItemCarteira item = carteira.getItens().get(ticker);
         Ativo ativo = item.getAtivo();
 
@@ -756,45 +774,59 @@ public class InvestidorApp {
         double quantidadeDisponivel = item.getQuantidade();
         System.out.println("Você possui " + quantidadeDisponivel + " unidades de " + ticker);
 
-        String desejo = "";
-        double quantidadeVender = 0;
+        String desejo;
+        double quantidadeVender;
 
+        // ===== ESCOLHA DA QUANTIDADE =====
         while (true) {
-            System.out.println("Escolha uma opção: ");
-            System.out.print("1.Vender tudo, 2.Vender quantidade personalizada ");
-            desejo = scanner.nextLine();
+            System.out.println("\nEscolha uma opção:");
+            System.out.print("1. Vender tudo | 2. Vender quantidade personalizada | S. Sair\n");
+            desejo = scanner.nextLine().toUpperCase();
 
+            if (desejo.equals("S")) {
+                System.out.println("Operação de venda cancelada.");
+                return;
+            }
             if (desejo.equals("1")) {
                 quantidadeVender = quantidadeDisponivel;
                 break;
             }
-            else if (desejo.equals("2")) {
-                System.out.println("Quanto deseja vender: ");
+            if (desejo.equals("2")) {
+                while (true) {
+                    System.out.println("Quanto deseja vender (ou 'S' para sair): ");
+                    String entrada = scanner.nextLine();
 
-                try {
-                    quantidadeVender = Utils.parseDoubleGeral(scanner.nextLine());
+                    if (entrada.equalsIgnoreCase("S")) {
+                        System.out.println("Operação de venda cancelada.");
+                        return;
+                    }
+                    try {
+                        quantidadeVender = Utils.parseDoubleGeral(entrada);
 
-                    if (quantidadeVender > quantidadeDisponivel) {
-                        System.out.println("ERRO: Você possui apenas " + quantidadeDisponivel + " unidades.");
-                        continue;
+                        if (quantidadeVender > quantidadeDisponivel) {
+                            System.out.println("ERRO: Você possui apenas " + quantidadeDisponivel + " unidades.");
+                            continue;
+                        }
+                        if (quantidadeVender <= 0) {
+                            System.out.println("ERRO: A quantidade deve ser maior que 0.");
+                            continue;
+                        }
+                        break;
+                    } catch (Exception e) {
+                        System.out.println("ERRO: Entrada inválida!");
                     }
-                    if (quantidadeVender <= 0) {
-                        System.out.println("ERRO: A quantidade desejada deve ser maior que 0.");
-                        continue;
-                    }
-                    break;
-                } catch (Exception e) {
-                    System.out.println("ERRO: Entrada inválida!");
                 }
+                break;
             }
-            else {
-                System.out.println("ERRO: Opção inválida! Tente novamente!");
-            }
+            System.out.println("ERRO: Opção inválida! Tente novamente.");
         }
-
-        System.out.println("Instituição responsável pela movimentação:");
+        System.out.println("Instituição responsável pela movimentação (ou 'S' para sair):");
         String instituicao = scanner.nextLine();
 
+        if (instituicao.equalsIgnoreCase("S")) {
+            System.out.println("Operação de venda cancelada.");
+            return;
+        }
         String resultado = investidor.cadastrarInvestimento(
                 ativo,
                 quantidadeVender,
@@ -812,9 +844,13 @@ public class InvestidorApp {
         String caminho;
         while (true) {
             try {
-                System.out.println("Digite o caminho do arquivo (ex: movimentacoes.csv): ");
+                System.out.println("Digite o caminho do arquivo (ex: movimentacoes.csv) ou 'S' para sair:");
                 caminho = scanner.nextLine();
 
+                if (caminho.equalsIgnoreCase("S")) {
+                    System.out.println("Cadastro em lote cancelado.");
+                    return;
+                }
                 File file = new File(caminho);
                 if (!file.exists() || !file.isFile()) {
                     System.out.println("ERRO: Arquivo não encontrado.");
@@ -831,6 +867,12 @@ public class InvestidorApp {
         }
         List<String[]> linhas = CSVReader.lerCSV(caminho);
 
+        if (linhas == null || linhas.isEmpty()) {
+            System.out.println("ERRO: O arquivo CSV está vazio.");
+            return;
+        }
+        int falhas = 0;
+
         for (String[] col : linhas) {
             try {
                 String tipo = col[0].trim().toUpperCase(); // COMPRA ou VENDA
@@ -841,10 +883,12 @@ public class InvestidorApp {
 
                 if (!bancoAtivos.containsKey(ticker)) {
                     System.out.println("ERRO: Ativo " + ticker + " não existe. Linha ignorada.");
+                    falhas++;
                     continue;
                 }
                 if (quantidade <= 0 || preco <= 0) {
                     System.out.println("ERRO: Quantidade ou preço inválido para " + ticker + ". Linha ignorada.");
+                    falhas++;
                     continue;
                 }
                 Ativo ativo = bancoAtivos.get(ticker);
@@ -859,8 +903,12 @@ public class InvestidorApp {
                 System.out.println("[" + tipo + "] " + ticker + " → " + resultado);
             } catch (Exception e) {
                 System.out.println("ERRO: Linha inválida no arquivo. Linha ignorada.");
+                falhas++;
             }
         }
-        System.out.println("\nLote de movimentações processado com sucesso!\n");
+        System.out.println("\nLote de movimentações processado!");
+        if (falhas > 0) {
+            System.out.println(falhas + " linha(s) apresentaram erro e foram ignoradas.");
+        }
     }
 }
