@@ -39,13 +39,18 @@ public class InvestidorApp {
                 String telLimpo = telefone.replaceAll("\\D", "");
                 telefone = telLimpo;
                 //11 com 9 na frente e 10 sem o 9 (jeito antigo)
-                if (telLimpo.length() == 11 || telLimpo.length() == 10) break;
+                if (telLimpo.length() == 11) break;
                 System.out.println("ERRO: Telefone com números faltando ou em excesso. Tente novamente.");
             }catch (InputMismatchException e){
                 System.out.println("ERRO: Número de telefone incorreto.");
             }
         }
 
+        try {
+            System.out.println("Data de nascimento: ");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         int dia, mes, ano;
         while (true) {
             try {
@@ -248,54 +253,58 @@ public class InvestidorApp {
                 if (!file.exists() || !file.isFile()) {
                     System.out.println("ERRO: Arquivo não encontrado.");
                     continue;
-                }
-                else if (caminho.endsWith(".csv")) break;
+                } else if (caminho.endsWith(".csv")) break;
                 System.out.println("ERRO: O caminho do arquivo precisa terminar com '.csv'.");
-            }catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 System.out.println("ERRO: Digite um caminho válido para o arquivo.");
             }
         }
 
-        System.out.println("Digite o tipo de investidores presente neste arquivo: ");
-        System.out.println("1- Pessoa Física, 2- Pessoa Institucional");
-        String tipoDoArquivo = scanner.nextLine();
 
         List<String[]> linhas = CSVReader.lerCSV(caminho);
-        //ordem -> nome, cpf, telefone, data, cep, estado, cidade, bairro, rua, numero, patrimonio, carteira, perfil
+        //ordem - nome, cpf, telefone, data, cep, estado, cidade, bairro, rua, numero, patrimonio, carteira, perfil
+        int falhas = 0;
+        int tam = 0;
+        for (String[] col : linhas) {
+            //criando endereço antes
+            String cep = col[4];
+            String estado = col[5];
+            String cidade = col[6];
+            String bairro = col[7];
+            String rua = col[8];
+            int numero = Integer.parseInt(col[9]);
+            Endereco endereco = new Endereco(rua, numero, bairro, cidade, estado, cep);
 
-        for  (String[] col : linhas) {
-                //criando endereço antes
-                String cep = col[4];
-                String estado = col[5];
-                String cidade = col[6];
-                String bairro = col[7];
-                String rua = col[8];
-                int numero = Integer.parseInt(col[9]);
-                Endereco endereco = new Endereco(rua,numero,bairro,cidade,estado,cep);
+            //dados gerais
+            String nome = col[0];
+            String id = col[1];
+            String telefone = col[2];
+            String data = col[3];
+            double patrimonio = Utils.parseDoubleGeral(col[10]);
+            Investidor novoInv = null;
+            Carteira carteira = new Carteira(null);
 
-                //dados gerais
-                String nome = col[0];
-                String id = col[1];
-                String telefone = col[2];
-                String data = col[3];
-                double patrimonio = Utils.parseDoubleGeral(col[10]);
-                Investidor novoInv = null;
-                Carteira carteira = new Carteira(null);
+            tam = id.length();
 
-                if (tipoDoArquivo.equalsIgnoreCase("1")) {
-                    PerfilInvestimento perfil = PerfilInvestimento.valueOf(col[12].toUpperCase().trim());
-                    novoInv = new PessoaFisica(nome, id, telefone, data, endereco, patrimonio, carteira, perfil);
-                } else if (tipoDoArquivo.equalsIgnoreCase("2")) {
-                    String razaoSocial = col[12].trim();
-                    novoInv = new PessoaInstitucional(nome,id,telefone, data, endereco, patrimonio, carteira, razaoSocial);
-                }
+            if (id.length() == 11) {
+                PerfilInvestimento perfil = PerfilInvestimento.valueOf(col[12].toUpperCase().trim());
+                novoInv = new PessoaFisica(nome, id, telefone, data, endereco, patrimonio, carteira, perfil);
 
-                if (novoInv != null) {
-                    bancoInvestidor.put(novoInv.getIdentificador(), novoInv);
-                    System.out.println("\nLote de investidores cadastrados com sucesso!\n");
-                }
+            } else if (id.length() == 14) {
+                String razaoSocial = col[12].trim();
+                novoInv = new PessoaInstitucional(nome, id, telefone, data, endereco, patrimonio, carteira, razaoSocial);
+
+            } else falhas++;
+
+            if (novoInv != null) {
+                bancoInvestidor.put(novoInv.getIdentificador(), novoInv);
+            }
         }
+        if (falhas > 0) System.out.println(falhas + " falhas devido a algum erro de credencial. Favor, verifique o '.csv' e tente novamente.");
+        if (tam == 11) System.out.println("Lote de pessoas físicas cadastrado!");
+        else if (tam == 14) System.out.println("Lote de pessoas institucionais cadastrado!");
     }
+
 
     public static void exibirInvestidores () {
         int paginaAtual= 0;
@@ -529,7 +538,7 @@ public class InvestidorApp {
                     else if (novoNome.trim().isEmpty()) System.out.println("ERRO: O nome não pode estar vazio.");
                     else {
                         investidor.setNome(novoNome);
-                        System.out.println("Nome atualizado!");
+                        System.out.println("Nome atualizado para " + investidor.getNome());
                         break;
                     }
                 }
@@ -539,7 +548,7 @@ public class InvestidorApp {
                     String tel = scanner.nextLine().replaceAll("\\D", "");
                     if (tel.length() == 11 || tel.length() == 10) {
                         investidor.setTelefone(tel);
-                        System.out.println("Telefone atualizado!");
+                        System.out.println("Telefone atualizado para " + investidor.getTelefone());
                         break;
                     }
                     System.out.println("ERRO: Formato inválido.");
@@ -582,7 +591,7 @@ public class InvestidorApp {
 
                 String novaData = String.format("%02d/%02d/%04d", dia, mes, ano);
                 investidor.setDataNascimento(novaData);
-                System.out.println("Data de nascimento atualizada!");
+                System.out.println("Data de nascimento atualizada para  " + investidor.getDataNascimento());
 
             } else if (escolha.equals("4")) {
                 System.out.println("Novo endereço: ");
@@ -639,19 +648,19 @@ public class InvestidorApp {
                 }
                 Endereco novoEndereco = new Endereco(rua, numero, bairro, cidade, estado, cep);
                 investidor.setEndereco(novoEndereco);
-                System.out.println("Endereço atualizado!");
+                System.out.println("Endereço atualizado para " + investidor.getEndereco().getCEP() + " | " + investidor.getEndereco().getCidade() + " | " + investidor.getEndereco().getEstado());
 
             } else if (escolha.equals("5")) {
                 while (true) {
                     try {
                         System.out.print("Novo Patrimônio TOTAL: ");
                         double patri = Double.parseDouble(scanner.nextLine().replace(",", "."));
-                        if (patri >= 0) {
+                        if (patri > 0) {
                             investidor.setPatrimonio(patri);
                             System.out.println("Patrimônio atualizado!");
                             break;
                         }
-                        System.out.println("ERRO: O patrimônio não pode ser negativo.");
+                        System.out.println("ERRO: O patrimônio não pode ser negativo nem nulo.");
                     } catch (Exception e) {
                         System.out.println("ERRO: Digite um valor válido.");
                     }
@@ -667,11 +676,18 @@ public class InvestidorApp {
         Scanner scanner = new Scanner(System.in);
         System.out.println("\nSaldo atual: " + investidor.getPatrimonio());
 
-        System.out.println("\nDigite o TICKER (ID) do ativo que deseja comprar: ");
-        String ticker = scanner.nextLine().toUpperCase().trim();
-        if (!bancoAtivos.containsKey(ticker)) {
-            System.out.println("ERRO: Esse ticker não foi encontrado no sistema.");
+        String ticker = "";
+        while (true) {
+            try {
+                System.out.println("\nDigite o TICKER (ID) do ativo que deseja comprar: ");
+                ticker = scanner.nextLine().toUpperCase().trim();
+                if (bancoAtivos.containsKey(ticker)) break;
+                System.out.println("ERRO: Esse ticker não foi encontrado no sistema.");
+            } catch (Exception e) {
+                System.out.println("ERRO: Digite um ticker válido.");
+            }
         }
+
 
         Ativo ativo = bancoAtivos.get(ticker);
 
@@ -686,6 +702,7 @@ public class InvestidorApp {
 
         String resultado = investidor.cadastrarInvestimento(ativo, quantidade, ativo.getPrecoAtual(), "COMPRA",  instituicao);
         System.out.println("\nResultado: " + resultado);
+
     }
 
     public static void movimentarVenda (Investidor investidor) {

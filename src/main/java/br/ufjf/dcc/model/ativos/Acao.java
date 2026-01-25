@@ -27,4 +27,8 @@ public class Acao extends Ativo {
     public void editarCamposEspecificos(String escolha, Scanner scanner) {
         //
     }
+    @Override
+    public boolean isOpcaoEspecificaValida(String opcao) {
+        return false;
+    }
 }

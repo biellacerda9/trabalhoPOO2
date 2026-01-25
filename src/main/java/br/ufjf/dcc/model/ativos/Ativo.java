@@ -55,20 +55,52 @@ public abstract class Ativo {
             System.out.print("Digite o novo nome: ");
             this.setNome(scanner.nextLine());
         } else if (escolha.equals("2")) {
-            System.out.print("Digite o novo ticker: ");
-            this.setTicker(scanner.nextLine());
-        } else if (escolha.equals("3")) {
-            System.out.print("Digite o novo preço: ");
-            this.setPrecoAtual(Double.parseDouble(scanner.nextLine().replace(",", ".")));
-        } else if (escolha.equals("4")) {
-            System.out.print("Digite a nova qualificação (SIM/NÃO): ");
-            String novaQualificacao = scanner.nextLine();
-            if (novaQualificacao.equalsIgnoreCase("SIM")) {
-                this.setQualificado(true);
-            } else if (novaQualificacao.equalsIgnoreCase("NÃO")) {
-                this.setQualificado(false);
+            String ticker = "";
+            while (true) {
+                System.out.println("Ticker: ");
+                ticker = scanner.nextLine().trim().toUpperCase();
+                if (!ticker.isEmpty() && !ticker.equals("")) break;
+                System.out.println("ERRO: O identificador não pode ser nulo.");
             }
+            this.setTicker(ticker);
+        } else if (escolha.equals("3")) {
+            double novoPreco = 0;
+            while (true) {
+                System.out.println("Preço: ");
+                String entradaPreco = scanner.nextLine().replace(",", ".");
+
+                try {
+                    novoPreco = Double.parseDouble(entradaPreco);
+
+                    if (novoPreco > 0) break;
+                    else System.out.println("ERRO! O preço deve ser maior que ZERO.");
+                } catch (NumberFormatException e) {
+                    System.out.println("ERRO: O valor não pode conter letras.");
+                    System.out.println("Use apenas números e ponto ou vírgula para decimais.");
+                }
+            }
+            this.setPrecoAtual(novoPreco);
+
+        } else if (escolha.equals("4")) {
+            boolean qualificado = false;
+            while (true) {
+                System.out.println("Qualificado? (S/N)");
+                String entrada = scanner.nextLine().trim().toUpperCase();
+
+                if (entrada.equals("S")) {
+                    qualificado = true;
+                    break;
+                } else if (entrada.equals("N")) {
+                    qualificado = false;
+                    break;
+                } else System.out.println("ERRO: Entrada inválida! Digite apenas 'S' para SIM ou 'N' para NÃO.");
+            }
+            this.setQualificado(qualificado);
         }
+    }
+
+    public boolean isOpcaoEspecificaValida(String opcao) {
+        return false;
     }
 
     public abstract String getMenuEspecifico();

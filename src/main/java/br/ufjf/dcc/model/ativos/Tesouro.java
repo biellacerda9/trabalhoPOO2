@@ -45,9 +45,15 @@ public class Tesouro extends Ativo {
         if (escolha.equals("5")) {
             System.out.print("Novo Tipo de Rendimento: ");
             this.setTipoRendimento(scanner.nextLine());
+            System.out.println("Novo tipo de rendimento alterado para " + this.getTipoRendimento());
         } else if (escolha.equals("6")) {
             System.out.print("Nova Data de Vencimento: ");
             this.setDataVencimento(scanner.nextLine());
+            System.out.println("Nova data de vencimento alterado para " + this.getDataVencimento());
         }
+    }
+    @Override
+    public boolean isOpcaoEspecificaValida(String opcao) {
+        return opcao.equals("5") || opcao.equals("6");
     }
 }

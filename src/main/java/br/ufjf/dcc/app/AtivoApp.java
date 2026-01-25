@@ -3,6 +3,8 @@ package br.ufjf.dcc.app;
 import br.ufjf.dcc.io.CSVReader;
 import br.ufjf.dcc.io.Utils;
 import br.ufjf.dcc.model.ativos.*;
+
+import java.io.File;
 import java.util.List;
 import java.util.Scanner;
 import static br.ufjf.dcc.data.BancoAtivos.bancoAtivos;
@@ -70,19 +72,29 @@ public class AtivoApp {
         String escolha = "";
 
         while (true) {
-            System.out.println("Escolha o tipo de ativo: 1. Ação, 2. FII, 3. Stock, 4. Cripto, 5. Tesouro");
+            System.out.println("Escolha o tipo de ativo: 1. Ação, 2. FII, 3. Stock, 4. Cripto, 5. Tesouro, V. Voltar");
             escolha = scanner.nextLine();
+            if (escolha.equalsIgnoreCase("V")) {
+                System.out.println("Voltando...");
+                return;
+            }
 
             if (escolha.equals("1") || escolha.equals("2") || escolha.equals("3") ||
                     escolha.equals("4") || escolha.equals("5")) {
                 break;
             } else {
-                System.out.println("Opção INVÁLIDA! Por favor, escolbha um número de 1 a 5.");
+                System.out.println("Opção INVÁLIDA! Por favor, escolha um número de 1 a 5 ou V para voltar.");
             }
         }
 
-        System.out.println("Ticker: ");
-        String ticker = scanner.nextLine().toUpperCase();
+        String ticker = "";
+        while (true) {
+                System.out.println("Ticker: ");
+                ticker = scanner.nextLine().trim().toUpperCase();
+                if (!ticker.isEmpty() && !ticker.equals("")) break;
+                System.out.println("ERRO: O identificador não pode ser nulo.");
+        }
+
         System.out.println("Nome: ");
         String nome = scanner.nextLine();
 
@@ -225,6 +237,13 @@ public class AtivoApp {
             try {
                 System.out.println("Digite o caminho do arquivo (ex: acoes.csv): ");
                 caminho = scanner.nextLine();
+
+                File file = new File(caminho);
+                if (!file.exists() || !file.isFile()) {
+                    System.out.println("ERRO: Arquivo não encontrado.");
+                    continue;
+                }
+
                 if (caminho.endsWith(".csv")) break;
                 System.out.println("ERRO: O caminho do arquivo precisa terminar com '.csv'.");
             }catch (IllegalArgumentException e) {
@@ -233,10 +252,29 @@ public class AtivoApp {
         }
 
         System.out.println("Digite o tipo de ativos presente neste arquivo: ");
-        System.out.println("1-Ação, 2-FII, 3-Stock, 4-Cripto, 5-Tesouro)");
+        System.out.println("1-Ação, 2-FII, 3-Stock, 4-Cripto, 5-Tesouro");
         String tipoDoArquivo = scanner.nextLine();
 
         List<String[]> linhas = CSVReader.lerCSV(caminho);
+
+        if (linhas.isEmpty()) {
+            System.out.println("ERRO: O arquivo está vazio.");
+            return;
+        }
+
+        String[] primeiraLinha = linhas.get(0);
+        boolean valido = false;
+
+        if (tipoDoArquivo.equals("1") && primeiraLinha.length >= 4) valido = true;
+        else if (tipoDoArquivo.equals("2") && primeiraLinha.length >= 7) valido = true;
+        else if (tipoDoArquivo.equals("3") && primeiraLinha.length >= 7) valido = true;
+        else if (tipoDoArquivo.equals("4") && primeiraLinha.length >= 7) valido = true;
+        else if (tipoDoArquivo.equals("5") && primeiraLinha.length >= 6) valido = true;
+
+        if (!valido) {
+            System.out.println("ERRO: O tipo de ativo selecionado não corresponde com o tipo presente no arquivo.");
+            return;
+        }
 
         for  (String[] col : linhas) {
             br.ufjf.dcc.model.ativos.Ativo novoAtivo = null;
@@ -256,6 +294,7 @@ public class AtivoApp {
                 bancoAtivos.put(novoAtivo.getTicker().toUpperCase() , novoAtivo);
             }
         }
+        System.out.println("Cadastro em lote concluído com sucesso.");
     }
 
 
@@ -314,7 +353,7 @@ public class AtivoApp {
                 break;
             } else {
                 System.out.println("Valor inválido. Digite novamente!");
-                return;
+                continue;
             }
         }
     }
@@ -330,7 +369,7 @@ public class AtivoApp {
 
         if (ativo != null) {
             String escolha = "";
-            while (!escolha.equals("0")) {
+            while (!escolha.equalsIgnoreCase("S")) {
                 System.out.println("\n--- MODO DE EDIÇÃO ---");
                 System.out.println("DADOS: " + ativo.getNome() + " | " + ativo.getPrecoAtual() + " | "  + ativo.getTicker() + " | "  + ativo.isQualificado());
                 System.out.println("1. Nome, 2. Ticker, 3. Preço, 4. Qualificação");
@@ -339,15 +378,19 @@ public class AtivoApp {
                 if (!menuExtra.isEmpty()) {
                     System.out.println(menuExtra);
                 }
-                System.out.println("0. Sair");
+                System.out.println("S. Sair");
 
                 escolha = scanner.nextLine();
 
                 if (escolha.equals("1") || escolha.equals("2") || escolha.equals("3") || escolha.equals("4")) {
                     ativo.editarCamposComuns(escolha, scanner);
-                } else if (!escolha.equals("0")) {
+                } else if (ativo.isOpcaoEspecificaValida(escolha)) {
                     ativo.editarCamposEspecificos(escolha, scanner);
+
+                } else if (!escolha.equals("s")) {
+                    System.out.println("Opção inválida!");
                 }
+
             }
         } else {
             System.out.println("Ativo não encontrado!");
@@ -442,7 +485,7 @@ public class AtivoApp {
             } else if   (escolha.equals("0")) {
                 System.out.println("Voltando...");
                 break;
-            }
+            } else System.out.println("Digite uma opção válida");
         }
     }
 }

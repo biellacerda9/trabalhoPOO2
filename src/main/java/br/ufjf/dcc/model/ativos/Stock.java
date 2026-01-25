@@ -60,12 +60,29 @@ public class Stock extends Ativo implements AtivoInternacional {
         if (escolha.equals("5")) {
             System.out.print("Nova Bolsa: ");
             this.setBolsaNegociacao(scanner.nextLine());
+            System.out.println("Nova bolsa de negociação alterada para " + this.getBolsaNegociacao());
         } else if (escolha.equals("6")) {
             System.out.print("Novo Setor: ");
             this.setSetorEmpresa(scanner.nextLine());
+            System.out.println("Novo setor da empresa alterado para " + this.getSetorEmpresa());
         } else if (escolha.equals("7")) {
-            System.out.print("Novo Fator de Conversão (Câmbio): ");
-            this.setFatorConversao(Double.parseDouble(scanner.nextLine().replace(",", ".")));
+            double fator = 0;
+            while (true) {
+                try {
+                    System.out.println("Fator de conversão: ");
+                    fator = Double.parseDouble(scanner.nextLine().replace(",", "."));
+                    if (fator >= 0) break;
+                    System.out.println("ERRO: O fator de conversão não pode ser negativo.");
+                }catch (NumberFormatException e) {
+                    System.out.println("Erro: Digite um valor numérico válido!");
+                }
+            }
+            this.setFatorConversao(fator);
+            System.out.println("Novo fator de conversão alterado para " + this.getFatorConversao());
         }
+    }
+    @Override
+    public boolean isOpcaoEspecificaValida(String opcao) {
+        return opcao.equals("5") || opcao.equals("6") || opcao.equals("7");
     }
 }

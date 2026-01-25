@@ -56,15 +56,39 @@ public class FII extends Ativo {
         if (escolha.equals("5")) {
             System.out.print("Digite o novo segmento: ");
             this.setSegmento(scanner.nextLine());
+            System.out.println("Novo segmento alterado para " + this.getSegmento());
         } else if (escolha.equals("6")) {
-            System.out.print("Digite o novo valor do dividendo: ");
-            String entrada = scanner.nextLine().replace(",", ".");
-            this.setValorDividendo(Double.parseDouble(entrada));
+            double entrada = 0;
+            while(true) {
+                try {
+                    System.out.print("Digite o novo valor do dividendo: ");
+                    entrada = Double.parseDouble(scanner.nextLine().replace(",", "."));
+                    if (entrada >= 0) break;
+                    System.out.println("ERRO: O valor do dividendo não pode ser nulo ou negativo");
+                } catch (Exception e) {
+                    System.out.println("ERRO: Digite apenas números.");
+                }
+            }
+                this.setValorDividendo(entrada);
+                System.out.println("Novo valor do dividendo alterado para " + this.getValorDividendo());
         } else if (escolha.equals("7")) {
-            System.out.print("Digite a nova taxa administrativa: ");
-            String entrada = scanner.nextLine().replace(",", ".");
-            this.setTaxaAdm(Double.parseDouble(entrada));
+            double entrada = 0;
+            while (true) {
+                try {
+                    System.out.print("Digite o novo taxa de administração: ");
+                    entrada = Double.parseDouble(scanner.nextLine().replace(",", "."));
+                    if (entrada >= 0) break;
+                    System.out.println("ERRO: O valor da taxa de administração não pode ser nula ou negativa");
+                } catch (Exception e) {
+                    System.out.println("ERRO: Digite apenas números.");
+                }
+            }
+            this.setTaxaAdm(entrada);
+            System.out.println("Nova taxa de administração alterado para " + this.getTaxaAdm());
         }
     }
-
+    @Override
+    public boolean isOpcaoEspecificaValida(String opcao) {
+        return opcao.equals("5") || opcao.equals("6") || opcao.equals("7");
+    }
 }

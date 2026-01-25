@@ -1,3 +1,3 @@
-Nome;ID;Tel;Data;CEP;Estado;Cidade;Bairro;Rua;Numero;Patrimonio;Carteira;Perfil
+Nome;CPF;Tel;Data;CEP;Estado;Cidade;Bairro;Rua;Numero;Patrimonio;Carteira;Perfil
 Joao Silva;12345678910;329999;10/05/1990;36010000;MG;JF;Centro;Rua A;100;5000.50;0;MODERADO
 Maria Oliveira;98765432100;319888;25/12/1985;30130010;MG;BH;Savassi;Av B;500;150000.00;0;ARROJADO
