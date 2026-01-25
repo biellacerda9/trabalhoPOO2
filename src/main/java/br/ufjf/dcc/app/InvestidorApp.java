@@ -24,119 +24,129 @@ public class InvestidorApp {
 
         String nome = "";
         while (true) {
-            System.out.println("Nome: ");
+            System.out.println("Nome (ou 'S' para sair): ");
             nome = scanner.nextLine();
-            if (nome.matches(".*\\d.*")) System.out.println("ERRO: O nome não pode conter números.");
-            else if (nome.trim().isEmpty()) System.out.println("ERRO: O nome não pode estar vazio.");
-            else break;
-        }
 
+            if (nome.equalsIgnoreCase("S")) {
+                System.out.println("Cadastro cancelado.\n");
+                return;
+            }
+            if (nome.matches(".*\\d.*"))
+                System.out.println("ERRO: O nome não pode conter números.");
+            else if (nome.trim().isEmpty())
+                System.out.println("ERRO: O nome não pode estar vazio.");
+            else
+                break;
+        }
         String telefone = "";
         while (true) {
-            try {
-                System.out.println("Telefone (COM DDD): ");
-                telefone = scanner.nextLine();
-                String telLimpo = telefone.replaceAll("\\D", "");
-                telefone = telLimpo;
-                //11 com 9 na frente e 10 sem o 9 (jeito antigo)
-                if (telLimpo.length() == 11) break;
-                System.out.println("ERRO: Telefone com números faltando ou em excesso. Tente novamente.");
-            }catch (InputMismatchException e){
-                System.out.println("ERRO: Número de telefone incorreto.");
-            }
-        }
+            System.out.println("Telefone (COM DDD) ou 'S' para sair: ");
+            telefone = scanner.nextLine();
 
-        try {
-            System.out.println("Data de nascimento: ");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            if (telefone.equalsIgnoreCase("S")) {
+                System.out.println("Cadastro cancelado.\n");
+                return;
+            }
+            String telLimpo = telefone.replaceAll("\\D", "");
+            if (telLimpo.length() == 11) {
+                telefone = telLimpo;
+                break;
+            }
+            System.out.println("ERRO: Telefone inválido.");
         }
         int dia, mes, ano;
         while (true) {
+            System.out.println("Dia (ou 'S' para sair): ");
+            String entrada = scanner.nextLine();
+
+            if (entrada.equalsIgnoreCase("S")) {
+                System.out.println("Cadastro cancelado.\n");
+                return;
+            }
             try {
-                System.out.println("Dia: ");
-                dia = Integer.parseInt(scanner.nextLine());
+                dia = Integer.parseInt(entrada);
                 if (dia >= 1 && dia <= 31) break;
                 System.out.println("ERRO: Dia inválido.");
-            }catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("ERRO: Digite apenas números.");
             }
         }
-
         while (true) {
+            System.out.println("Mês (ou 'S' para sair): ");
+            String entrada = scanner.nextLine();
+
+            if (entrada.equalsIgnoreCase("S")) {
+                System.out.println("Cadastro cancelado.\n");
+                return;
+            }
             try {
-                System.out.println("Mês: ");
-                mes = Integer.parseInt(scanner.nextLine());
+                mes = Integer.parseInt(entrada);
                 if (mes >= 1 && mes <= 12) break;
                 System.out.println("ERRO: Mês inválido.");
-            }catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("ERRO: Digite apenas números.");
             }
         }
-
         while (true) {
+            System.out.println("Ano (ou 'S' para sair): ");
+            String entrada = scanner.nextLine();
+
+            if (entrada.equalsIgnoreCase("S")) {
+                System.out.println("Cadastro cancelado.\n");
+                return;
+            }
             try {
-                System.out.println("Ano: ");
-                ano = Integer.parseInt(scanner.nextLine());
+                ano = Integer.parseInt(entrada);
                 if (ano > 1900 && ano <= 2026) break;
                 System.out.println("ERRO: Ano inválido.");
-            }catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("ERRO: Digite apenas números.");
             }
         }
-
         String dataNascimento = String.format("%02d/%02d/%04d", dia, mes, ano);
 
-        double patrimonio = 0;
+        double patrimonio;
         while (true) {
+            System.out.println("Patrimônio TOTAL (ou -1 para sair): ");
             try {
-                System.out.println("Patrimônio TOTAL (em real): ");
                 patrimonio = scanner.nextDouble();
-                if (patrimonio >= 0) {
-                    scanner.nextLine();
-                    break;
+                scanner.nextLine();
+
+                if (patrimonio == -1) {
+                    System.out.println("Cadastro cancelado.\n");
+                    return;
                 }
-                System.out.println("ERRO: O patrimônio não deve ser negativo.");
-            }catch (InputMismatchException e){
-                System.out.println("ERRO: Digite uma entrada válida.");
+                if (patrimonio >= 0) break;
+                System.out.println("ERRO: O patrimônio não pode ser negativo.");
+            } catch (InputMismatchException e) {
+                System.out.println("ERRO: Digite um valor válido.");
                 scanner.nextLine();
             }
         }
-
         System.out.println("--- ENDEREÇO ---");
 
-        String cep = "";
+        String cep;
         while (true) {
-            try {
-                System.out.println("CEP: ");
-                cep = scanner.nextLine();
-                String cepLimpo = cep.replaceAll("\\D", "");
-                cep = cepLimpo;
-                if (cepLimpo.length() == 8) break;
-                System.out.println("ERRO: CEP com números em excesso ou faltando.");
-            }catch (Exception e) {
-                System.out.println("ERRO: Digite uma opção válida.");
+            System.out.println("CEP (ou 'S' para sair): ");
+            cep = scanner.nextLine();
+
+            if (cep.equalsIgnoreCase("S")) {
+                System.out.println("Cadastro cancelado.\n");
+                return;
             }
+            String cepLimpo = cep.replaceAll("\\D", "");
+            if (cepLimpo.length() == 8) {
+                cep = cepLimpo;
+                break;
+            }
+            System.out.println("ERRO: CEP inválido.");
         }
 
-        String estado = "";
-        while (true) {
-            System.out.println("Estado: ");
-            estado = scanner.nextLine();
+        System.out.println("Estado: ");
+        String estado = scanner.nextLine();
 
-            if (estado.matches(".*\\d.*")) System.out.println("ERRO: O nome do estado não pode conter números.");
-            else if (estado.trim().isEmpty()) System.out.println("ERRO: O nome do estado não pode estar vazio.");
-            else break;
-        }
-
-        String cidade = "";
-        while (true) {
-            System.out.println("Cidade: ");
-            cidade = scanner.nextLine();
-            if (cidade.matches(".*\\d.*")) System.out.println("ERRO: O nome do cidade não pode conter números.");
-            else if (cidade.trim().isEmpty()) System.out.println("ERRO: O nome do cidade não pode estar vazio.");
-            else break;
-        }
+        System.out.println("Cidade: ");
+        String cidade = scanner.nextLine();
 
         System.out.println("Bairro: ");
         String bairro = scanner.nextLine();
@@ -145,100 +155,78 @@ public class InvestidorApp {
         String rua = scanner.nextLine();
 
         System.out.println("Número: ");
-        int numero;
-        while(true) {
-            if(scanner.hasNextInt()) {
-                numero = scanner.nextInt();
-                scanner.nextLine();
-                break;
-            } else {
-                System.out.println("Valor inválido. Digite novamente!");
-                scanner.next();
-            }
-        }
+        int numero = scanner.nextInt();
+        scanner.nextLine();
 
-        Endereco endereco = new Endereco(rua,numero,bairro,cidade,estado,cep);
+        Endereco endereco = new Endereco(rua, numero, bairro, cidade, estado, cep);
 
-        String escolha = "";
+        String escolha;
         while (true) {
-            try {
-                System.out.println("1- Pessoa Física | 2- Pessoa Institucional:");
-                escolha = scanner.nextLine();
-                if (escolha.equals("1") || escolha.equals("2")) break;
-                System.out.println("ERRO: Digite 1 para Pessoa Física e 2 para Institucional.");
-            }catch (Exception e) {
-                System.out.println("ERRO: Digite um número válido.");
+            System.out.println("1- Pessoa Física | 2- Pessoa Institucional | S- Sair");
+            escolha = scanner.nextLine();
+
+            if (escolha.equalsIgnoreCase("S")) {
+                System.out.println("Cadastro cancelado.\n");
+                return;
             }
+            if (escolha.equals("1") || escolha.equals("2")) break;
+            System.out.println("ERRO: Opção inválida.");
         }
 
-        br.ufjf.dcc.model.Investidor novoInv = null;
+        Investidor novoInv;
         Carteira carteira = new Carteira(null);
 
         if (escolha.equals("1")) {
-            String cpf = "";
+            String cpf;
             while (true) {
-                try {
-                    System.out.println("CPF: ");
-                    cpf = scanner.nextLine();
-                    String cpfLimpo = cpf.replaceAll("\\D", "");
-                    cpf =  cpfLimpo;
-                    if (cpf.length() == 11) break;
-                    System.out.println("ERRO: Digitos em excesso ou faltando. Tente novamente.");
-                }catch (Exception e) {
-                    System.out.println("ERRO: CPF inválido.");
+                System.out.println("CPF (ou 'S' para sair): ");
+                cpf = scanner.nextLine();
+
+                if (cpf.equalsIgnoreCase("S")) {
+                    System.out.println("Cadastro cancelado.\n");
+                    return;
                 }
+                cpf = cpf.replaceAll("\\D", "");
+                if (cpf.length() == 11) break;
+                System.out.println("ERRO: CPF inválido.");
             }
+            System.out.println("Perfil: [1] Conservador | [2] Moderado | [3] Arrojado");
+            String perfilString = scanner.nextLine();
 
-            String perfilString = "";
-            while (true) {
-                System.out.println("Perfil de investimento : [1] Conservador | [2] Moderado | [3] Arrojado ");
-                perfilString =  scanner.nextLine();
-                if (perfilString.equals("1") || perfilString.equals("2") || perfilString.equals("3")) break;
-                System.out.println("ERRO: Valor inválido. Digite novamente.");
-            }
-            PerfilInvestimento perfil;
-
-            if (perfilString.equals("1")) {
-                perfil = PerfilInvestimento.CONSERVADOR;
-            } else if  (perfilString.equals("2")) {
-                perfil = PerfilInvestimento.MODERADO;
-            } else if (perfilString.equals("3")) {
-                perfil = PerfilInvestimento.ARROJADO;
-            } else {
-                System.out.println("Valor Invalido. Cancelando cadastro!");
+            PerfilInvestimento perfil =
+                    perfilString.equals("1") ? PerfilInvestimento.CONSERVADOR :
+                            perfilString.equals("2") ? PerfilInvestimento.MODERADO :
+                                    perfilString.equals("3") ? PerfilInvestimento.ARROJADO : null;
+            if (perfil == null) {
+                System.out.println("Cadastro cancelado.\n");
                 return;
             }
-
             novoInv = new PessoaFisica(nome, cpf, telefone, dataNascimento, endereco, patrimonio, carteira, perfil);
+            bancoInvestidor.put(cpf, novoInv);
 
-            if(novoInv != null){
-                System.out.println("\nInvestidor cadastrado com sucesso!\n");
-                bancoInvestidor.put(cpf, novoInv);
-            }
-        } else  if (escolha.equals("2")) {
-            String cnpj = "";
+        } else {
+            String cnpj;
             while (true) {
-                try {
-                    System.out.println("CNPJ: ");
-                    cnpj= scanner.nextLine();
-                    String cnpjLimpo = cnpj.replaceAll("\\D", "");
-                    cnpj = cnpjLimpo;
-                    if (cnpj.length() == 14) break;
-                    System.out.println("ERRO: Digitos em excesso ou faltando. Tente novamente.");
-                }catch (Exception e) {
-                    System.out.println("ERRO: CPF inválido.");
+                System.out.println("CNPJ (ou 'S' para sair): ");
+                cnpj = scanner.nextLine();
+
+                if (cnpj.equalsIgnoreCase("S")) {
+                    System.out.println("Cadastro cancelado.\n");
+                    return;
                 }
+                cnpj = cnpj.replaceAll("\\D", "");
+                if (cnpj.length() == 14) break;
+                System.out.println("ERRO: CNPJ inválido.");
             }
             System.out.println("Razão Social: ");
             String razaoSocial = scanner.nextLine();
-            novoInv = new PessoaInstitucional(nome, cnpj, telefone, dataNascimento, endereco, patrimonio, carteira, razaoSocial);
 
-            if(novoInv != null){
-                bancoInvestidor.put(cnpj, novoInv);
-                System.out.println("\nInvestidor cadastrado com sucesso!\n");
-            }
+            novoInv = new PessoaInstitucional(nome, cnpj, telefone, dataNascimento, endereco, patrimonio, carteira, razaoSocial);
+            bancoInvestidor.put(cnpj, novoInv);
         }
+        System.out.println("\nInvestidor cadastrado com sucesso!\n");
     }
+
 
     public static void cadastrarInvestidorEmLote () {
         Scanner scanner = new Scanner(System.in);
@@ -246,71 +234,95 @@ public class InvestidorApp {
         String caminho = "";
         while (true) {
             try {
-                System.out.println("Digite o caminho do arquivo (ex: investidores.csv): ");
+                System.out.println("Digite o caminho do arquivo (ex: investidores.csv) ou 'S' para sair: ");
                 caminho = scanner.nextLine();
 
+                if (caminho.equalsIgnoreCase("S")) {
+                    System.out.println("Cadastro em lote cancelado.\n");
+                    return;
+                }
                 File file = new File(caminho);
                 if (!file.exists() || !file.isFile()) {
                     System.out.println("ERRO: Arquivo não encontrado.");
                     continue;
-                } else if (caminho.endsWith(".csv")) break;
-                System.out.println("ERRO: O caminho do arquivo precisa terminar com '.csv'.");
+                }
+                if (!caminho.endsWith(".csv")) {
+                    System.out.println("ERRO: O caminho do arquivo precisa terminar com '.csv'.");
+                    continue;
+                }
+                break;
             } catch (IllegalArgumentException e) {
                 System.out.println("ERRO: Digite um caminho válido para o arquivo.");
             }
         }
 
-
         List<String[]> linhas = CSVReader.lerCSV(caminho);
-        //ordem - nome, cpf, telefone, data, cep, estado, cidade, bairro, rua, numero, patrimonio, carteira, perfil
+
+        // ordem - nome, cpf/cnpj, telefone, data, cep, estado, cidade, bairro, rua, numero, patrimonio, carteira, perfil/razao
         int falhas = 0;
         int tam = 0;
+
         for (String[] col : linhas) {
-            //criando endereço antes
-            String cep = col[4];
-            String estado = col[5];
-            String cidade = col[6];
-            String bairro = col[7];
-            String rua = col[8];
-            int numero = Integer.parseInt(col[9]);
-            Endereco endereco = new Endereco(rua, numero, bairro, cidade, estado, cep);
+            try {
+                String cep = col[4];
+                String estado = col[5];
+                String cidade = col[6];
+                String bairro = col[7];
+                String rua = col[8];
+                int numero = Integer.parseInt(col[9]);
 
-            //dados gerais
-            String nome = col[0];
-            String id = col[1];
-            String telefone = col[2];
-            String data = col[3];
-            double patrimonio = Utils.parseDoubleGeral(col[10]);
-            Investidor novoInv = null;
-            Carteira carteira = new Carteira(null);
+                Endereco endereco = new Endereco(rua, numero, bairro, cidade, estado, cep);
 
-            tam = id.length();
+                String nome = col[0];
+                String id = col[1];
+                String telefone = col[2];
+                String data = col[3];
+                double patrimonio = Utils.parseDoubleGeral(col[10]);
 
-            if (id.length() == 11) {
-                PerfilInvestimento perfil = PerfilInvestimento.valueOf(col[12].toUpperCase().trim());
-                novoInv = new PessoaFisica(nome, id, telefone, data, endereco, patrimonio, carteira, perfil);
+                Investidor novoInv = null;
+                Carteira carteira = new Carteira(null);
 
-            } else if (id.length() == 14) {
-                String razaoSocial = col[12].trim();
-                novoInv = new PessoaInstitucional(nome, id, telefone, data, endereco, patrimonio, carteira, razaoSocial);
+                tam = id.length();
 
-            } else falhas++;
-
-            if (novoInv != null) {
-                bancoInvestidor.put(novoInv.getIdentificador(), novoInv);
+                if (id.length() == 11) {
+                    PerfilInvestimento perfil =
+                            PerfilInvestimento.valueOf(col[12].toUpperCase().trim());
+                    novoInv = new PessoaFisica(
+                            nome, id, telefone, data, endereco, patrimonio, carteira, perfil
+                    );
+                } else if (id.length() == 14) {
+                    String razaoSocial = col[12].trim();
+                    novoInv = new PessoaInstitucional(
+                            nome, id, telefone, data, endereco, patrimonio, carteira, razaoSocial
+                    );
+                } else {
+                    falhas++;
+                }
+                if (novoInv != null) {
+                    bancoInvestidor.put(novoInv.getIdentificador(), novoInv);
+                }
+            } catch (Exception e) {
+                falhas++;
             }
         }
-        if (falhas > 0) System.out.println(falhas + " falhas devido a algum erro de credencial. Favor, verifique o '.csv' e tente novamente.");
-        if (tam == 11) System.out.println("Lote de pessoas físicas cadastrado!");
-        else if (tam == 14) System.out.println("Lote de pessoas institucionais cadastrado!");
+        if (falhas > 0)
+            System.out.println(falhas + " falhas devido a erro nos dados. Verifique o arquivo CSV.");
+        if (tam == 11)
+            System.out.println("Lote de pessoas físicas cadastrado!");
+        else if (tam == 14)
+            System.out.println("Lote de pessoas institucionais cadastrado!");
     }
 
 
     public static void exibirInvestidores () {
-        int paginaAtual= 0;
+        if (bancoInvestidor.isEmpty()) {
+            System.out.println("\nNenhum investidor cadastrado.\n");
+            return;
+        }
+        int paginaAtual = 0;
         int itensPorPagina = 50;
 
-        while(true) {
+        while (true) {
             System.out.println("\n------- PÁGINA " + (paginaAtual + 1) + " -------");
             int contadorGeral = 0;
             int contadorExibidos = 0;
@@ -318,13 +330,12 @@ public class InvestidorApp {
 
             boolean temMaisPagina = false;
 
-            for (br.ufjf.dcc.model.Investidor a: bancoInvestidor.values()) {
-                if(contadorGeral < pulaPagina){
+            for (Investidor a : bancoInvestidor.values()) {
+                if (contadorGeral < pulaPagina) {
                     contadorGeral++;
                     continue;
                 }
-
-                if(contadorExibidos < itensPorPagina){
+                if (contadorExibidos < itensPorPagina) {
                     System.out.println(a.getNome() + " | " + a.getIdentificador());
                     contadorExibidos++;
                     contadorGeral++;
@@ -335,33 +346,33 @@ public class InvestidorApp {
             }
             Scanner scanner = new Scanner(System.in);
             System.out.print("\n-----");
-            if(paginaAtual > 0 ){
+            if (paginaAtual > 0) {
                 System.out.print(" [A] Anterior |");
             }
-            if (temMaisPagina){
-                System.out.print(" [P] Proximo |");
+            if (temMaisPagina) {
+                System.out.print(" [P] Próximo |");
             }
             System.out.print(" [S] Sair ");
             System.out.print("-----\n");
+
             String opcao = scanner.nextLine().toUpperCase();
 
-            if(opcao.equals("P")){
-                if(temMaisPagina){
+            if (opcao.equals("P")) {
+                if (temMaisPagina) {
                     paginaAtual++;
                 } else {
-                    System.out.println("Você está na ultima página!");
+                    System.out.println("Você está na última página!");
                 }
-            } else if (opcao.equals("A")){
+            } else if (opcao.equals("A")) {
                 if (paginaAtual > 0) {
                     paginaAtual--;
                 } else {
                     System.out.println("Você está na primeira página");
                 }
-            } else if (opcao.equals("S")){
+            } else if (opcao.equals("S")) {
                 break;
             } else {
                 System.out.println("Valor inválido. Digite novamente!");
-                return;
             }
         }
     }

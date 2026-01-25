@@ -21,7 +21,9 @@ public class PessoaFisica extends Investidor{
 
     public boolean podeInvestir (Ativo ativo) {
         if (ativo instanceof Criptomoeda && this.perfil != PerfilInvestimento.ARROJADO) return false;
-        if (ativo instanceof Stock && this.perfil != PerfilInvestimento.MODERADO || this.perfil != PerfilInvestimento.ARROJADO) return false;
+        if (ativo instanceof Stock && this.perfil != PerfilInvestimento.MODERADO && this.perfil != PerfilInvestimento.ARROJADO) {
+            return false;
+        }
         if (ativo.isQualificado() && this.getPatrimonio() < 1000000) return false;
 
         return true;
